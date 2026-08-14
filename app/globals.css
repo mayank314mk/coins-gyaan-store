@@ -45,3 +45,125 @@ body {
   background: rgba(183, 139, 71, 0.24);
   color: var(--foreground);
 }
+
+.site-header-row {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  grid-template-areas:
+    "brand actions actions"
+    "search search search";
+  align-items: center;
+  row-gap: 0.75rem;
+  column-gap: 0.75rem;
+}
+
+.site-header-menu-toggle {
+  display: inline-flex;
+}
+
+.site-header-brand {
+  grid-area: brand;
+  min-width: 0;
+}
+
+.site-header-actions {
+  grid-area: actions;
+  justify-self: end;
+}
+
+.site-header-search {
+  grid-area: search;
+}
+
+.site-header-action-label {
+  display: none;
+}
+
+.site-header-topbar {
+  display: none;
+}
+
+.site-header-nav-row {
+  display: none;
+}
+
+.site-header-actions {
+  order: 1;
+}
+
+.site-header-search {
+  order: 2;
+}
+
+.site-header-mobile-backdrop {
+  display: none;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.site-header-mobile-drawer {
+  left: -82vw;
+}
+
+.peer:checked ~ .site-header-mobile-backdrop {
+  display: block !important;
+  opacity: 1 !important;
+  pointer-events: auto !important;
+}
+
+.peer:checked ~ .site-header-mobile-drawer {
+  left: 0 !important;
+}
+
+@media (min-width: 930px) {
+  .site-header-row {
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    gap: 0.75rem;
+  }
+
+  .site-header-brand,
+  .site-header-actions,
+  .site-header-search {
+    grid-area: auto;
+    justify-self: auto;
+  }
+
+  .site-header-menu-toggle {
+    display: none !important;
+  }
+
+  .site-header-topbar {
+    display: block !important;
+  }
+
+  .site-header-nav-row {
+    display: flex !important;
+    justify-content: flex-start !important;
+    gap: 0.75rem;
+    overflow-x: auto !important;
+    white-space: nowrap !important;
+  }
+
+  .site-header-nav-row a {
+    flex: 0 0 auto !important;
+  }
+
+  .site-header-actions {
+    order: 2 !important;
+  }
+
+  .site-header-search {
+    order: 1 !important;
+  }
+
+  .site-header-action-label {
+    display: block;
+  }
+
+  .site-header-mobile-backdrop,
+  .site-header-mobile-drawer {
+    display: none !important;
+  }
+}
