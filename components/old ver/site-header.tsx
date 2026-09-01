@@ -1,10 +1,7 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React from "react";
 import Image from "next/image";
-import Link from "next/link";
-import { NavLink } from "./nav-link";
-import { CATEGORIES, DESKTOP_NAV_CATEGORIES } from "../lib/categories";
 
 const trustItems = [
   {
@@ -25,51 +22,38 @@ const trustItems = [
   },
 ] as const;
 
+const primaryNavItems = [
+  "Home",
+  "Republic India",
+  "British India",
+  "Princely States",
+  "Ancient India",
+  "Commemorative Coins",
+  "Rare",
+  "Scare",
+  "Medieval India",
+  "Error Coin",
+  "Die Variety",
+] as const;
+
 export function SiteHeader() {
-  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
-
-  // Close drawer on escape key press
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === "Escape") {
-        setIsDrawerOpen(false);
-      }
-    };
-    if (isDrawerOpen) {
-      document.body.style.overflow = "hidden";
-      window.addEventListener("keydown", handleKeyDown);
-    } else {
-      document.body.style.overflow = "";
-    }
-    return () => {
-      document.body.style.overflow = "";
-      window.removeEventListener("keydown", handleKeyDown);
-    };
-  }, [isDrawerOpen]);
-
-  // Listen for custom event fired by homepage "View All" in Explore by Category
-  useEffect(() => {
-    const handler = () => setIsDrawerOpen(true);
-    window.addEventListener("open-category-sidebar", handler);
-    return () => window.removeEventListener("open-category-sidebar", handler);
-  }, []);
-
   return (
     <>
+      <input id="category-menu-toggle" type="checkbox" className="peer sr-only" />
       <header className="site-header relative z-30 bg-white max-[768px]:shadow-none shadow-[0_1px_0_rgba(0,0,0,0.05)]">
         <TopTrustBar />
         <div className="border-b border-gray-200 max-[768px]:border-none bg-white">
           <div className="site-header-row mx-auto w-full max-w-360 xl:px-8">
             <div className="site-header-mobile-bar px-4 py-3">
               <div className="site-header-brand flex items-center gap-2">
-                <button
-                  type="button"
-                  onClick={() => setIsDrawerOpen(true)}
+                <label
+                  htmlFor="category-menu-toggle"
                   aria-label="Open category menu"
+                  role="button"
                   className="site-header-menu-toggle inline-flex h-9 w-9 items-center justify-center rounded-full text-brand-strong transition-colors hover:text-accent"
                 >
                   <MenuIcon />
-                </button>
+                </label>
                 <BrandBlock />
               </div>
               <ActionLinks className="site-header-actions" />
@@ -80,90 +64,46 @@ export function SiteHeader() {
           </div>
         </div>
       </header>
-
-      {/* Category Bar Navigation */}
       <nav className="sticky top-0 z-40 border-b max-[768px]:border-none border-gray-200 bg-white">
         <div className="mx-auto w-full max-w-360 px-4 min-[930px]:px-6 xl:px-8">
-          <div className="site-header-nav-row max-h-[42px] flex flex-wrap items-center justify-start gap-1.5 md:gap-2.5 py-1.5 text-sm text-foreground overflow-hidden">
-            {/* See All button with Hamburger Menu */}
-            <button
-              type="button"
-              onClick={() => setIsDrawerOpen(true)}
-              className="group flex shrink-0 items-center gap-1.5 rounded-md bg-white px-3 py-1 text-sm font-semibold text-brand-strong transition-colors hover:text-accent"
-              aria-label="See all categories"
-            >
-              <MenuIcon className="h-4 w-4 text-brand-strong group-hover:text-accent transition-colors" />
-              <span>See All</span>
-            </button>
-
-            {/* Desktop Category Bar Items without horizontal scrolling */}
-            {DESKTOP_NAV_CATEGORIES.map((item) => (
-              <NavLink
-                key={item.label}
-                href={item.href}
-                slug={item.slug}
-                className="shrink-0 px-2.5 py-1 text-sm font-medium text-foreground/80 hover:text-accent transition-colors"
-                activeClassName="shrink-0 px-2.5 py-1 text-sm font-bold text-accent border-b-2 border-accent transition-colors"
+          <div className="site-header-nav-row items-center justify-start gap-3 overflow-x-auto whitespace-nowrap py-1.5 text-sm text-foreground">
+            {primaryNavItems.map((item) => (
+              <a
+                key={item}
+                href="#"
+                className="shrink-0 px-3 py-1 font-medium text-foreground/80 hover:text-accent"
               >
-                {item.label}
-              </NavLink>
+                {item}
+              </a>
             ))}
           </div>
         </div>
       </nav>
-
-      {/* Category Sidebar Drawer & Backdrop (Accessible for both Desktop and Mobile) */}
-      {isDrawerOpen && (
-        <div
-          role="button"
-          tabIndex={0}
-          onClick={() => setIsDrawerOpen(false)}
-          onKeyDown={(e) => {
-            if (e.key === "Enter" || e.key === " ") setIsDrawerOpen(false);
-          }}
-          aria-label="Close category sidebar"
-          className="h-[100lvh] fixed inset-0 z-50 bg-black/40 backdrop-blur-[2px] transition-opacity animate-in fade-in duration-200"
-        />
-      )}
-
-      <aside
-        className={`site-header-mobile-drawer fixed top-0 left-0 bottom-0 z-50 flex h-[100lvh] w-[82vw] max-w-80 flex-col border-r border-gray-200 bg-white shadow-2xl transition-transform duration-300 ease-in-out ${
-          isDrawerOpen ? "translate-x-0" : "-translate-x-full"
-        }`}
-      >
+      <div className="site-header-mobile-backdrop pointer-events-none fixed inset-0 z-40 min-[930px]:hidden">
+        <label htmlFor="category-menu-toggle" aria-label="Close category menu" className="absolute inset-0 h-[100lvh] bg-black/25" />
+      </div>
+      <aside className="site-header-mobile-drawer fixed top-0 z-50 flex h-[100lvh] w-[82vw] max-w-80 flex-col border-r border-gray-200 bg-white shadow-2xl min-[930px]:hidden">
         <div className="flex items-center justify-between border-b border-gray-200 px-4 py-4">
           <BrandBlock />
-          <button
-            type="button"
-            onClick={() => setIsDrawerOpen(false)}
+          <label
+            htmlFor="category-menu-toggle"
             aria-label="Close category menu"
+            role="button"
             className="inline-flex h-9 w-9 items-center justify-center rounded-full text-brand-strong transition-colors hover:text-accent"
           >
             <span className="text-lg leading-none">×</span>
-          </button>
+          </label>
         </div>
         <div className="flex-1 overflow-y-auto px-3 py-3">
           <div className="flex flex-col gap-1">
-            <NavLink
-              href="/all-coins"
-              slug="all"
-              onClick={() => setIsDrawerOpen(false)}
-              className="rounded-md px-3 py-2 text-sm font-medium text-foreground/80 hover:bg-gray-100 hover:text-accent"
-              activeClassName="rounded-md px-3 py-2 text-sm font-bold text-accent bg-accent/10"
-            >
-              All Coins
-            </NavLink>
-            {CATEGORIES.map((item) => (
-              <NavLink
-                key={item.slug}
-                href={item.href}
-                slug={item.slug}
-                onClick={() => setIsDrawerOpen(false)}
+            {primaryNavItems.map((item) => (
+              <a
+                key={item}
+                href="#"
                 className="rounded-md px-3 py-2 text-sm font-medium text-foreground/80 hover:bg-gray-100 hover:text-accent"
-                activeClassName="rounded-md px-3 py-2 text-sm font-bold text-accent bg-accent/10"
               >
-                {item.name}
-              </NavLink>
+                {item}
+              </a>
             ))}
           </div>
         </div>
@@ -189,7 +129,7 @@ function TopTrustBar() {
 
 function BrandBlock() {
   return (
-    <Link href="/" className="flex min-w-0 items-center gap-3 self-start min-[930px]:self-auto">
+    <a href="#" className="flex min-w-0 items-center gap-3 self-start min-[930px]:self-auto">
       <div className="relative h-10 w-10 flex-none overflow-hidden rounded-full min-[930px]:h-11 min-[930px]:w-11">
         <Image src="/images/logo.png" alt="Coins Gyaan Store logo" fill className="object-cover" priority />
       </div>
@@ -199,7 +139,7 @@ function BrandBlock() {
           <span className="block min-[930px]:ml-1 min-[930px]:inline">Store</span>
         </div>
       </div>
-    </Link>
+    </a>
   );
 }
 
@@ -224,21 +164,21 @@ function SearchBar({ className = "" }: { className?: string }) {
 }
 
 function ActionLinks({ className = "" }: { className?: string }) {
-  const actions: { label: string; href: string; icon: React.ComponentType<{ className?: string }>; badge?: string; iconClassName?: string }[] = [
-    { label: "Wishlist", href: "#wishlist", icon: HeartIcon },
-    { label: "Cart", href: "#cart", icon: CartIcon, badge: "0" },
-    { label: "Login / Signup", href: "#login", icon: UserIcon, iconClassName: "h-5.5 w-5.5" },
+  const actions: { label: string; icon: React.ComponentType<{ className?: string }>; badge?: string; iconClassName?: string }[] = [
+    { label: "Wishlist", icon: HeartIcon },
+    { label: "Cart", icon: CartIcon, badge: "0" },
+    { label: "Login / Signup", icon: UserIcon, iconClassName: "h-5.5 w-5.5" },
   ];
 
   return (
     <div className={`flex items-center gap-3 sm:gap-4 min-[930px]:shrink-0 ${className}`}>
-      {actions.map(({ label, href, icon: Icon, badge, iconClassName }) => (
-        <Link
+      {actions.map(({ label, icon: Icon, badge, iconClassName }) => (
+        <a
           key={label}
-          href={href}
-          className="relative flex flex-col items-center  px-0.5 py-0 text-xs font-medium text-brand-strong hover:text-accent transition-colors"
+          href="#"
+          className="relative flex flex-col items-center gap-0.5 px-0.5 py-0 text-xs font-medium text-brand-strong hover:text-accent"
         >
-          <span className="relative inline-flex h-7 w-9 items-center justify-center rounded-full bg-transparent">
+          <span className="relative inline-flex h-9 w-9 items-center justify-center rounded-full bg-transparent">
             <Icon className={iconClassName ?? "h-5 w-5"} />
             {badge ? (
               <span className="absolute -right-0.5 -top-0.5 inline-flex h-4 min-w-4 items-center justify-center rounded-full bg-accent px-1 text-[10px] font-semibold text-white shadow-sm min-[930px]:bg-accent">
@@ -247,15 +187,15 @@ function ActionLinks({ className = "" }: { className?: string }) {
             ) : null}
           </span>
           <span className="site-header-action-label text-[12px] leading-tight text-inherit">{label}</span>
-        </Link>
+        </a>
       ))}
     </div>
   );
 }
 
-function MenuIcon({ className = "h-5 w-5" }: { className?: string }) {
+function MenuIcon() {
   return (
-    <svg viewBox="0 0 24 24" aria-hidden="true" className={className} fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round">
+    <svg viewBox="0 0 24 24" aria-hidden="true" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round">
       <path d="M4 7h16" />
       <path d="M4 12h16" />
       <path d="M4 17h16" />

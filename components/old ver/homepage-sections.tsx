@@ -1,49 +1,86 @@
-"use client";
-
 import Image from "next/image";
-import Link from "next/link";
-import { ProductCard } from "./product-card";
-import { CATEGORIES } from "../lib/categories";
-import { allProducts } from "../lib/products";
 
-const trendingProducts = allProducts.slice(0, 5);
+const categories = [
+  "Republic India",
+  "British India",
+  "Princely States",
+  "Ancient India",
+  "Commemorative Coins",
+  "Rare",
+  "Scare",
+  "Medieval India",
+  "Error Coin",
+  "Die Variety",
+] as const;
+
+const categoryImages = [
+  "/coin-large-left.png",
+  "/coin-medium-top.png",
+  "/coin-gold-small.png",
+  "/coin-scalloped-front.png",
+] as const;
+
+const products = [
+  {
+    name: "Republic India 1970 20 Rupees Food & Agriculture Organization",
+    price: "₹550",
+    originalPrice: "₹950",
+    image: "/coin-medium-top.png",
+  },
+  {
+    name: "Republic India 1988 10 Paise Scalloped Edge Commemorative Coin",
+    price: "₹150",
+    originalPrice: "₹300",
+    image: "/coin-scalloped-front.png",
+  },
+  {
+    name: "Republic India 2010 2 Rupees Ashoka Pillar Lion Capital Definitive",
+    price: "₹350",
+    originalPrice: "₹650",
+    image: "/coin-large-left.png",
+  },
+  {
+    name: "Republic India 1997 2 Rupees Netaji Subhas Chandra Bose Centenary",
+    price: "₹250",
+    originalPrice: "₹450",
+    image: "/coin-gold-small.png",
+  },
+  {
+    name: "Republic India 2010 5 Rupees Platinum Jubilee of Reserve Bank",
+    price: "₹450",
+    originalPrice: "₹850",
+    image: "/coin-large-left.png",
+  },
+] as const;
 
 export function CategorySection() {
-  function openSidebar() {
-    window.dispatchEvent(new CustomEvent("open-category-sidebar"));
-  }
-
   return (
     <section
       id="categories"
       className="bg-white px-4 py-6 sm:px-6 lg:px-8 lg:py-8"
     >
       <div className="mx-auto max-w-[1440px]">
-        <SectionHeading
-          title="Explore by Category"
-          action="View All"
-          onActionClick={openSidebar}
-        />
+        <SectionHeading title="Explore by Category" />
         <div className="hide-scrollbar flex gap-2 sm:gap-3 overflow-x-auto pb-1 lg:grid lg:grid-cols-10 lg:gap-3 lg:overflow-visible">
-          {CATEGORIES.map((category) => (
-            <Link
-              key={category.slug}
-              href={category.href}
+          {categories.map((category, index) => (
+            <a
+              key={category}
+              href="#"
               className="group flex w-[100px] flex-none flex-col items-center rounded-2xl p-2.5 text-center transition-colors hover:bg-gray-100 lg:w-auto"
             >
               <div className="relative flex h-[76px] w-[76px] items-center justify-center sm:h-[84px] sm:w-[84px]">
                 <Image
-                  src={category.image}
-                  alt={category.name}
+                  src={categoryImages[index % categoryImages.length]}
+                  alt=""
                   fill
                   sizes="84px"
                   className="object-contain p-1 transition-transform duration-200 group-hover:scale-100"
                 />
               </div>
               <span className="mt-2 block text-xs font-semibold leading-4 text-brand-strong">
-                {category.shortName ?? category.name}
+                {category}
               </span>
-            </Link>
+            </a>
           ))}
         </div>
       </div>
@@ -58,17 +95,10 @@ export function TrendingSection() {
       className="bg-white px-4 py-6 sm:px-6 lg:px-8 lg:py-8"
     >
       <div className="mx-auto max-w-[1440px]">
-        <SectionHeading title="Trending Coins" action="View All" actionHref="/trending" />
-        {/* Mobile: one card fills ~85% of the screen width; the next peeks
-            in to signal there is more to scroll. sm: fixed 190px. lg: 5-col grid. */}
+        <SectionHeading title="Trending Coins" action="View All" />
         <div className="hide-scrollbar flex gap-3 overflow-x-auto pb-2 sm:gap-4 lg:grid lg:grid-cols-5 lg:overflow-visible">
-          {trendingProducts.map((product) => (
-            <div
-              key={product.id}
-              className="w-[66vw] max-w-[240px] flex-none sm:w-[200px] lg:w-auto lg:flex-auto"
-            >
-              <ProductCard {...product} />
-            </div>
+          {products.map((product) => (
+            <ProductCard key={product.name} {...product} />
           ))}
         </div>
       </div>
@@ -127,7 +157,6 @@ export function ChannelSection() {
               className="relative aspect-[16/9] w-full shrink-0 overflow-hidden rounded-xl sm:w-72 lg:w-48"
             >
               <Image
-                src="/images/Thumbnail.jpg"
                 alt="PRICE of All Rare Coins of Republic India video thumbnail"
                 fill
                 sizes="(max-width: 640px) 100vw, (max-width: 1024px) 288px, 200px"
@@ -135,7 +164,9 @@ export function ChannelSection() {
               />
             </a>
 
-            {/* Views + button */}
+            {/* Views + button:
+                mobile  → full-width row, justify-between (views left, button right)
+                desktop → centered column */}
             <div className="flex items-center justify-between lg:flex-1 lg:flex-col lg:items-start lg:justify-center lg:gap-2.5">
               <div className="flex items-center gap-2">
                 <ViewIcon />
@@ -157,8 +188,8 @@ export function ChannelSection() {
             </div>
           </div>
 
-          {/* Video title */}
-          <p className="mt-3 text-sm leading-5 text-text-muted">
+          {/* Video title — below everything, full card width on all screen sizes */}
+          <p className="mt-3 text-sm leading-5 text-text-muted lg:text-center">
             PRICE of All Rare Coins of Republic India | सभी दुर्लभ सिक्कों की कीमत जानें | COINS GYAAN
           </p>
         </article>
@@ -200,32 +231,49 @@ export function BenefitsSection() {
 }
 
 export function SiteFooter() {
-  const shopLinks = [
-    { label: "All Coins", href: "/all-coins" },
-    ...CATEGORIES.map((c) => ({ label: c.shortName ?? c.name, href: c.href })),
-  ];
-
-  const serviceLinks = [
-    { label: "Track Order", href: "#track-order" },
-    { label: "Shipping & Delivery", href: "#shipping" },
-    { label: "Returns & Refunds", href: "#returns" },
-    { label: "FAQs", href: "#faqs" },
-    { label: "Contact Us", href: "#contact" },
-  ];
-
-  const companyLinks = [
-    { label: "About Us", href: "#about" },
-    { label: "YouTube Channel", href: "https://www.youtube.com/@COINNEWS-rn5br", isExternal: true },
-    { label: "Coin Guide", href: "#guide" },
-    { label: "Terms & Conditions", href: "#terms" },
-    { label: "Privacy Policy", href: "#privacy" },
+  const groups = [
+    {
+      title: "Shop",
+      links: [
+        "All Coins",
+        "Republic India",
+        "British India",
+        "Princely States",
+        "Ancient India",
+        "Commemorative Coins",
+        "Rare",
+        "Scare",
+        "Error Coin",
+        "Die Variety",
+      ],
+    },
+    {
+      title: "Customer Service",
+      links: [
+        "Track Order",
+        "Shipping & Delivery",
+        "Returns & Refunds",
+        "FAQs",
+        "Contact Us",
+      ],
+    },
+    {
+      title: "Company",
+      links: [
+        "About Us",
+        "YouTube Channel",
+        "Coin Guide",
+        "Terms & Conditions",
+        "Privacy Policy",
+      ],
+    },
   ];
 
   return (
     <footer className="bg-brand px-4 pb-[88px] pt-10 text-white sm:px-6 lg:px-8 lg:pb-8">
       <div className="mx-auto grid max-w-[1440px] gap-8 md:grid-cols-2 lg:grid-cols-[1.4fr_1fr_1fr_1fr]">
         <div>
-          <Link href="/" className="flex items-center gap-3">
+          <a href="#" className="flex items-center gap-3">
             <Image
               src="/images/logo.png"
               alt="Coins Gyaan Store"
@@ -236,7 +284,7 @@ export function SiteFooter() {
             <span className="text-xl font-bold tracking-tight">
               Coins Gyaan Store
             </span>
-          </Link>
+          </a>
           <p className="mt-3 text-sm font-medium text-white/85">
             Preserve History. Treasure India.
           </p>
@@ -245,65 +293,22 @@ export function SiteFooter() {
             collecting knowledge.
           </p>
         </div>
-
-        {/* Shop */}
-        <div>
-          <h2 className="text-sm font-semibold uppercase tracking-wider text-white/90">
-            Shop
-          </h2>
-          <ul className="mt-3 space-y-2 text-xs text-white/70">
-            {shopLinks.map((link) => (
-              <li key={link.label}>
-                <Link href={link.href} className="transition-colors hover:text-white">
-                  {link.label}
-                </Link>
-              </li>
-            ))}
-          </ul>
-        </div>
-
-        {/* Customer Service */}
-        <div>
-          <h2 className="text-sm font-semibold uppercase tracking-wider text-white/90">
-            Customer Service
-          </h2>
-          <ul className="mt-3 space-y-2 text-xs text-white/70">
-            {serviceLinks.map((link) => (
-              <li key={link.label}>
-                <Link href={link.href} className="transition-colors hover:text-white">
-                  {link.label}
-                </Link>
-              </li>
-            ))}
-          </ul>
-        </div>
-
-        {/* Company */}
-        <div>
-          <h2 className="text-sm font-semibold uppercase tracking-wider text-white/90">
-            Company
-          </h2>
-          <ul className="mt-3 space-y-2 text-xs text-white/70">
-            {companyLinks.map((link) => (
-              <li key={link.label}>
-                {link.isExternal ? (
-                  <a
-                    href={link.href}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="transition-colors hover:text-white"
-                  >
-                    {link.label}
+        {groups.map((group) => (
+          <div key={group.title}>
+            <h2 className="text-sm font-semibold uppercase tracking-wider text-white/90">
+              {group.title}
+            </h2>
+            <ul className="mt-3 space-y-2 text-xs text-white/70">
+              {group.links.map((link) => (
+                <li key={link}>
+                  <a href="#" className="transition-colors hover:text-white">
+                    {link}
                   </a>
-                ) : (
-                  <Link href={link.href} className="transition-colors hover:text-white">
-                    {link.label}
-                  </Link>
-                )}
-              </li>
-            ))}
-          </ul>
-        </div>
+                </li>
+              ))}
+            </ul>
+          </div>
+        ))}
       </div>
       <div className="mx-auto mt-8 flex max-w-[1440px] flex-col gap-2 border-t border-white/15 pt-4 text-xs text-white/60 sm:flex-row sm:items-center sm:justify-between">
         <span>Copyright 2026 Coins Gyaan Store. All rights reserved.</span>
@@ -314,69 +319,76 @@ export function SiteFooter() {
 }
 
 export function MobileBottomNav() {
-  function openSidebar() {
-    window.dispatchEvent(new CustomEvent("open-category-sidebar"));
-  }
-
   return (
     <nav className="fixed inset-x-0 bottom-0 z-30 flex justify-around border-t border-gray-200 bg-white/95 px-3 py-2 text-[11px] font-semibold text-brand-strong backdrop-blur sm:hidden">
-      <Link href="/" className="grid place-items-center gap-1 hover:text-accent transition-colors">
-        <HomeIcon />
-        <span>Home</span>
-      </Link>
-      <button
-        type="button"
-        onClick={openSidebar}
-        className="grid place-items-center gap-1 hover:text-accent transition-colors"
-      >
+      <NavItem label="Home" icon={<HomeIcon />} />
+      <a href="#categories" className="grid place-items-center gap-1">
         <GridIcon />
         <span>Categories</span>
-      </button>
-      <Link href="/all-coins" className="grid place-items-center gap-1 hover:text-accent transition-colors">
+      </a>
+      <a href="#trending" className="grid place-items-center gap-1">
         <CartIcon />
-        <span>Shop</span>
-      </Link>
-      <Link href="#account" className="grid place-items-center gap-1 hover:text-accent transition-colors">
-        <UserIcon />
-        <span>Account</span>
-      </Link>
+        <span>Cart</span>
+      </a>
+      <NavItem label="Account" icon={<UserIcon />} />
     </nav>
   );
 }
 
-function SectionHeading({
-  title,
-  action,
-  actionHref = "/all-coins",
-  onActionClick,
-}: {
-  title: string;
-  action?: string;
-  actionHref?: string;
-  onActionClick?: () => void;
-}) {
+function ProductCard({
+  name,
+  price,
+  originalPrice,
+  image,
+}: (typeof products)[number]) {
+  return (
+    <article className="cursor-pointer flex w-[245px] flex-none flex-col rounded-2xl border border-gray-200 bg-gray-50 p-3.5 shadow-sm transition-all hover:border-gray-300 hover:shadow-md sm:w-[265px] lg:w-auto">
+      <div className="relative flex h-40 sm:h-44 items-center justify-center rounded-xl bg-gray-50 p-2">
+        <Image
+          src={image}
+          alt={name}
+          fill
+          sizes="(max-width: 640px) 220px, 20vw"
+          className="object-contain p-2"
+        />
+      </div>
+      <h3 className="mt-3 line-clamp-2 min-h-[2.5rem] text-sm font-semibold leading-5 text-brand-strong">
+        {name}
+      </h3>
+      <div className="mt-2 flex items-center justify-between">
+        <div className="flex items-baseline gap-2">
+          <p className="text-lg font-bold text-brand-strong">{price}</p>
+          <span className="text-xs font-medium text-text-muted line-through">
+            {originalPrice}
+          </span>
+        </div>
+        <button
+          aria-label={`Add ${name} to wishlist`}
+          className="grid h-8 w-8 place-items-center rounded-full text-brand-strong transition-colors hover:bg-gray-200"
+        >
+          <HeartIcon />
+        </button>
+      </div>
+      <button className="mt-3 h-9 rounded-md bg-brand text-sm font-semibold text-white transition-colors hover:bg-brand-strong">
+        Add to Cart
+      </button>
+    </article>
+  );
+}
+
+function SectionHeading({ title, action }: { title: string; action?: string }) {
   return (
     <div className="mb-4 flex items-center justify-between">
       <h2 className="text-xl font-bold tracking-tight text-brand-strong sm:text-2xl">
         {title}
       </h2>
       {action && (
-        onActionClick ? (
-          <button
-            type="button"
-            onClick={onActionClick}
-            className="text-sm font-semibold text-accent transition-colors hover:text-brand"
-          >
-            {action} <span aria-hidden="true">-&gt;</span>
-          </button>
-        ) : (
-          <Link
-            href={actionHref}
-            className="text-sm font-semibold text-accent transition-colors hover:text-brand"
-          >
-            {action} <span aria-hidden="true">-&gt;</span>
-          </Link>
-        )
+        <a
+          href="#"
+          className="text-sm font-semibold text-accent transition-colors hover:text-brand"
+        >
+          {action} <span aria-hidden="true">-&gt;</span>
+        </a>
       )}
     </div>
   );
@@ -401,6 +413,15 @@ function Stat({
         </small>
       </span>
     </div>
+  );
+}
+
+function NavItem({ label, icon }: { label: string; icon: React.ReactNode }) {
+  return (
+    <a href="#" className="grid place-items-center gap-1">
+      {icon}
+      <span>{label}</span>
+    </a>
   );
 }
 
@@ -480,6 +501,14 @@ function ViewIcon() {
     <IconShell>
       <path d="M2.5 12s3.3-5 9.5-5 9.5 5 9.5 5-3.3 5-9.5 5-9.5-5-9.5-5Z" />
       <circle cx="12" cy="12" r="2" />
+    </IconShell>
+  );
+}
+
+function HeartIcon() {
+  return (
+    <IconShell>
+      <path d="M20 8.6c0 5-8 10-8 10s-8-5-8-10a4.3 4.3 0 0 1 8-2.4 4.3 4.3 0 0 1 8 2.4Z" />
     </IconShell>
   );
 }
