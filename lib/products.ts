@@ -17,75 +17,99 @@ export type Product = {
   price: number;
   originalPrice?: number;
   image: string;
+  backImage?: string;
   category: CoinCategory;
   isNew?: boolean;
   discount?: number;
+  description?: string;
 };
 
 const rawProducts: Omit<Product, "discount">[] = [
   {
     id: "p-001",
-    name: "Republic India 1970 ",
+    name: "Republic India 1970 1 Rupee Definitive Coin",
     year: "1970",
     price: 550,
     originalPrice: 950,
-    image: "/images/coins/10 Rs Food fol All F.png",
+    image: "/images/coins/1 Rs 1970 F.png",
+    backImage: "/images/coins/1 Rs 1970 B.png",
     category: "Commemorative Coins",
     isNew: true,
+    description:
+      "Authentic Republic India 1970 1 Rupee coin in collectible grade condition. Features the iconic Lion Capital of Ashoka on the obverse and value with ear of corn design on the reverse.",
   },
   {
     id: "p-002",
-    name: "Republic India 1969",
-    year: "1969",
-    price: 1850,
-    image: "/images/coins/10 Rs Gandhi F.png",
+    name: "Republic India 2005 5 Rupees 75 Years of Dandi March",
+    year: "2005",
+    price: 650,
+    originalPrice: 900,
+    image: "/images/coins/5 Rs DANDI F.png",
+    backImage: "/images/coins/5 Rs DAANDI B.png",
     category: "Commemorative Coins",
+    description:
+      "Commemorating the historic 75th anniversary of Mahatma Gandhi's Salt Satyagraha / Dandi March. A sought-after commemorative issue for Indian history collectors.",
   },
   {
     id: "p-003",
-    name: "Republic India 1972 10 Rupees 25th Anniversary of Independence",
-    year: "1972",
-    price: 850,
-    originalPrice: 1200,
-    image: "/images/coins/10 Rs 25th Ani Ind F.png",
+    name: "Republic India 2007 5 Rupees 50 Years of Khadi & Village Industries",
+    year: "2007",
+    price: 480,
+    originalPrice: 700,
+    image: "/images/coins/5 Rs KHADI F.png",
+    backImage: "/images/coins/5 Rs KHAADI B.png",
     category: "Commemorative Coins",
+    description:
+      "Special commemorative issue marking the golden jubilee of the Khadi and Village Industries Commission (KVIC), showcasing the spinning wheel motif.",
   },
   {
     id: "p-004",
-    name: "Republic India 1973 20 Rupees Grow More Food / Water For Life",
-    year: "1973",
-    price: 1250,
-    originalPrice: 1800,
-    image: "/images/coins/20 Rs Rain Drop F.png",
-    category: "Commemorative Coins",
+    name: "Republic India 1982 1 Rupee National Integration Map Coin",
+    year: "1982",
+    price: 320,
+    originalPrice: 500,
+    image: "/images/coins/1 Rs 1982 F.png",
+    backImage: "/images/coins/1 Rs 1982 B.png",
+    category: "Republic India",
     isNew: true,
+    description:
+      "Issued in 1982 to promote national solidarity, depicting the outline map of India with national flag and integration motifs.",
   },
   {
     id: "p-005",
-    name: "Republic India 2006 10 Rupees VIP Proof Set State Bank of India",
-    year: "2006",
-    price: 4500,
-    originalPrice: 6000,
-    image: "/images/coins/10 Rs 2006 VIP Set B.png",
+    name: "Republic India 1959 50 Naye Paise Rare Bombay Mint Coin",
+    year: "1959",
+    price: 1650,
+    originalPrice: 2200,
+    image: "/images/coins/50 Paise 1959 F.png",
+    backImage: "/images/coins/50 Paise 1959 B.png",
     category: "Rare",
+    description:
+      "Highly collectible 1959 50 Naye Paise coin from the early decimal coinage era of Republic India. Preserved in exceptional collector condition.",
   },
   {
     id: "p-006",
-    name: "Republic India 2005 10 Rupees Unity in Diversity Cross Mumbai Mint",
-    year: "2005",
-    price: 1200,
-    originalPrice: 1750,
-    image: "/images/coins/10 Cross B Mumbai Mint.png",
-    category: "Error Coin",
+    name: "Republic India 1993 25 Paise Rhinoceros Wildlife Issue",
+    year: "1993",
+    price: 240,
+    originalPrice: 380,
+    image: "/images/coins/25 Paise 1993 F.png",
+    backImage: "/images/coins/25 Paise 1993 B.png",
+    category: "Die Variety",
+    description:
+      "Iconic 25 Paise stainless steel coin depicting the Indian One-Horned Rhinoceros, a favorite among thematic wildlife and numismatic collectors.",
   },
   {
     id: "p-007",
-    name: "Republic India 2015 10 Rupees Tatya Tope Commemorative Coin",
-    year: "2015",
-    price: 220,
-    originalPrice: 350,
-    image: "/images/coins/10 Rs Tatya Tope B.png",
-    category: "Commemorative Coins",
+    name: "Republic India 1957 50 Naye Paise First Year Decimal Series",
+    year: "1957",
+    price: 850,
+    originalPrice: 1200,
+    image: "/images/coins/50 Paise 1957 F.png",
+    backImage: "/images/coins/50 Paise 1957 B.png",
+    category: "Republic India",
+    description:
+      "First year of issue for India's decimal coinage system introduced on 1st April 1957. Featuring Ashoka Lion Capital and fractional rupee denomination.",
   },
   {
     id: "p-008",
@@ -94,8 +118,11 @@ const rawProducts: Omit<Product, "discount">[] = [
     price: 350,
     originalPrice: 500,
     image: "/images/coins/5 Rs 1st WAR F.png",
+    backImage: "/images/coins/5 Rs 1st WAR B.png",
     category: "Medieval India",
     isNew: true,
+    description:
+      "Issued to commemorate 150 years of the historic 1857 First War of Indian Independence. Depicts freedom fighters with national insignia.",
   },
   {
     id: "p-009",
@@ -103,8 +130,11 @@ const rawProducts: Omit<Product, "discount">[] = [
     year: "2021",
     price: 150,
     originalPrice: 220,
-    image: "/images/coins/5 Rs 2021 B.png",
+    image: "/images/coins/5 Rs 2021 F.png",
+    backImage: "/images/coins/5 Rs 2021 B.png",
     category: "Republic India",
+    description:
+      "Modern commemorative bi-metallic/nickel-brass theme celebrating 75 years of India's independence under the Azadi Ka Amrit Mahotsav initiative.",
   },
   {
     id: "p-010",
@@ -112,7 +142,10 @@ const rawProducts: Omit<Product, "discount">[] = [
     year: "1996",
     price: 280,
     image: "/images/coins/2 Rs 1996 F.png",
+    backImage: "/images/coins/2 Rs 1996 B.png",
     category: "Commemorative Coins",
+    description:
+      "Centenary commemorative issue celebrating the birth of Netaji Subhas Chandra Bose, featuring a prominent military portrait of Netaji.",
   },
   {
     id: "p-011",
@@ -120,7 +153,10 @@ const rawProducts: Omit<Product, "discount">[] = [
     year: "1998",
     price: 240,
     image: "/images/coins/2 Rs 1998 F.png",
+    backImage: "/images/coins/2 Rs 1998 B.png",
     category: "Commemorative Coins",
+    description:
+      "Commemorating the legacy of freedom fighter and jurist Deshbandhu Chittaranjan Das, with portrait and bilingual inscriptions.",
   },
   {
     id: "p-012",
@@ -129,8 +165,11 @@ const rawProducts: Omit<Product, "discount">[] = [
     price: 450,
     originalPrice: 650,
     image: "/images/coins/1 Rs 1985 F.png",
+    backImage: "/images/coins/1 Rs 1985 B.png",
     category: "Republic India",
     isNew: true,
+    description:
+      "Cupro-nickel commemorative 1 Rupee coin marking the UN International Youth Year 1985, featuring profile motifs symbolizing youth advancement.",
   },
   {
     id: "p-013",
@@ -138,44 +177,60 @@ const rawProducts: Omit<Product, "discount">[] = [
     year: "1991",
     price: 180,
     originalPrice: 280,
-    image: "/images/coins/1 Rs 1991 B.png",
+    image: "/images/coins/1 Rs 1991 F.png",
+    backImage: "/images/coins/1 Rs 1991 B.png",
     category: "Republic India",
+    description:
+      "Official 1 Rupee issue highlighting India Tourism Year 1991 with stylized peacock motif representing Indian heritage.",
   },
   {
     id: "p-014",
-    name: "Republic India 1959 50 Naye Paise Rare Bombay Mint Coin",
-    year: "1959",
-    price: 1650,
-    originalPrice: 2200,
-    image: "/images/coins/50 Paise 1959 B.png",
-    category: "Rare",
+    name: "Republic India 1986 50 Paise Fisheries Development Issue",
+    year: "1986",
+    price: 340,
+    originalPrice: 480,
+    image: "/images/coins/50 Paise 1986 F.png",
+    backImage: "/images/coins/50 Paise 1986 B.png",
+    category: "Scare",
     isNew: true,
+    description:
+      "Commemorative issue celebrating fisheries development in India with fisherman boat and ocean wave relief artwork.",
   },
   {
     id: "p-015",
-    name: "Republic India 1978 50 Paise Food & Work For All FAO Issue",
-    year: "1978",
-    price: 320,
-    image: "/images/coins/50 Paise 1978 B.png",
+    name: "Republic India 1988 50 Paise Definitive Series Coin",
+    year: "1988",
+    price: 210,
+    originalPrice: 320,
+    image: "/images/coins/50 Paise 1988 F.png",
+    backImage: "/images/coins/50 Paise 1988 B.png",
     category: "Commemorative Coins",
+    description:
+      "Classic cupro-nickel 50 Paise coin from 1988 with crisp Ashoka Lion emblem and clean reverse typography.",
   },
   {
     id: "p-016",
-    name: "Republic India 1982 50 Paise National Integration Map Coin",
-    year: "1982",
+    name: "Republic India 1983 1 Rupee Definitive Cupro-Nickel Coin",
+    year: "1983",
     price: 260,
     originalPrice: 390,
-    image: "/images/coins/50 Paise 1982 B.png",
+    image: "/images/coins/1 Rs 1983 F.png",
+    backImage: "/images/coins/1 Rs 1983 B.png",
     category: "Republic India",
+    description:
+      "Standard circulating coin of 1983 representing the iconic large cupro-nickel 1 Rupee series of the 1980s.",
   },
   {
     id: "p-017",
-    name: "Republic India 1993 50 Paise Parliament House Mumbai Mint",
-    year: "1993",
+    name: "Republic India 1980 25 Paise Definitive Issue",
+    year: "1980",
     price: 190,
     originalPrice: 300,
-    image: "/images/coins/50 Paise 1993 MUMBAI B.png",
+    image: "/images/coins/25 Paise 1980 F.png",
+    backImage: "/images/coins/25 Paise 1980 B.png",
     category: "Republic India",
+    description:
+      "Vintage 1980 25 Paise coin featuring bold numeral 25, flanked by grain ears and national lion pillar crest.",
   },
   {
     id: "p-018",
@@ -184,94 +239,126 @@ const rawProducts: Omit<Product, "discount">[] = [
     price: 220,
     originalPrice: 320,
     image: "/images/coins/50 Paise 1996 CROP F.png",
+    backImage: "/images/coins/50 Paise 1996 CROP B.png",
     category: "Commemorative Coins",
+    description:
+      "Issued in honor of the Iron Man of India, Sardar Vallabhbhai Patel, commemorating his immense role in Indian national integration.",
   },
   {
     id: "p-019",
-    name: "Republic India 1981 25 Paise Rural Women's Advancement FAO",
-    year: "1981",
+    name: "Republic India 1982 25 Paise IX Asian Games Delhi Commemorative",
+    year: "1982",
     price: 290,
     originalPrice: 450,
-    image: "/images/coins/25 Paise 1981 B.png",
+    image: "/images/coins/25 Paise 1982 F.png",
+    backImage: "/images/coins/25 Paise 1982 B.png",
     category: "Scare",
+    description:
+      "Special sports commemorative issue celebrating the 9th Asian Games held in New Delhi, featuring the Appu mascot and Asian Games emblem.",
   },
   {
     id: "p-020",
-    name: "Republic India 1982 25 Paise IX Asian Games Delhi Commemorative",
-    year: "1982",
-    price: 210,
-    originalPrice: 350,
-    image: "/images/coins/25 Paise 1982 F.png",
-    category: "Commemorative Coins",
-  },
-  {
-    id: "p-021",
-    name: "Republic India 1993 25 Paise Rhinoceros Wildlife Issue",
-    year: "1993",
-    price: 180,
-    originalPrice: 260,
-    image: "/images/coins/25 paise 1993 F new.png",
-    category: "Die Variety",
-  },
-  {
-    id: "p-022",
-    name: "Republic India 1968 20 Paise Lotus Aluminum Bronze Coin",
-    year: "1968",
-    price: 380,
-    originalPrice: 550,
-    image: "/images/coins/20 Paisa B.png",
-    category: "Ancient India",
-    isNew: true,
-  },
-  {
-    id: "p-023",
-    name: "Republic India 1997 20 Paise 50 Years of Independence Commemorative",
-    year: "1997",
-    price: 340,
-    originalPrice: 500,
-    image: "/images/coins/20 Paise 1997 B.png",
-    category: "Scare",
-  },
-  {
-    id: "p-024",
-    name: "Republic India 1984 5 Paise Square Aluminum Coin",
-    year: "1984",
-    price: 120,
-    originalPrice: 200,
-    image: "/images/coins/5 Paise 1984 B.png",
-    category: "Republic India",
-  },
-  {
-    id: "p-025",
-    name: "Republic India 1969 2 Paise Mahatma Gandhi Centenary Aluminum Coin",
-    year: "1969",
-    price: 350,
-    image: "/images/coins/2 Paise 1969 B.png",
-    category: "Princely States",
-  },
-  {
-    id: "p-026",
     name: "Republic India 1955 Two Annas Bull Type Rare Coin",
     year: "1955",
     price: 2400,
     originalPrice: 3200,
-    image: "/images/coins/2 anna 1955 B.png",
+    image: "/images/coins/2 anna 1955 F.png",
+    backImage: "/images/coins/2 anna 1955 B.png",
     category: "Rare",
+    description:
+      "Extremely popular pre-decimal cupro-nickel Two Annas coin depicting the charging Zebu bull, one of the most aesthetic Republic India coins.",
   },
   {
-    id: "p-027",
+    id: "p-021",
     name: "Republic India 1953 1 Pice Single Paisa Galloping Horse",
     year: "1953",
     price: 890,
     originalPrice: 1300,
-    image: "/images/coins/1 Pice 1953 B.png",
+    image: "/images/coins/1 Pice 1953 F.png",
+    backImage: "/images/coins/1 Pice 1953 B.png",
     category: "British India",
     isNew: true,
+    description:
+      "Historic bronze One Pice coin showing the dynamic galloping horse motif, minted during the formative post-independence transition era.",
+  },
+  {
+    id: "p-022",
+    name: "Republic India 1957 50 Naye Paise Choice Uncirculated",
+    year: "1957",
+    price: 780,
+    originalPrice: 1100,
+    image: "/images/coins/50 Paise 1957 B.png",
+    backImage: "/images/coins/50 Paise 1957 F.png",
+    category: "Ancient India",
+    isNew: true,
+    description:
+      "Choice specimen of the initial decimal 50 Naye Paise series with sharp strikes on the Ashoka Lion crest and denomination.",
+  },
+  {
+    id: "p-023",
+    name: "Republic India 1986 50 Paise Special Mint Strike",
+    year: "1986",
+    price: 340,
+    originalPrice: 500,
+    image: "/images/coins/50 Paise 1986 B.png",
+    backImage: "/images/coins/50 Paise 1986 F.png",
+    category: "Scare",
+    description:
+      "Clean strike 1986 50 Paise coin highlighting FAO Fisheries initiative with crisp rim denticles and detailed reverse.",
+  },
+  {
+    id: "p-024",
+    name: "Republic India 1983 1 Rupee Collector Condition",
+    year: "1983",
+    price: 180,
+    originalPrice: 280,
+    image: "/images/coins/1 Rs 1983 B.png",
+    backImage: "/images/coins/1 Rs 1983 F.png",
+    category: "Republic India",
+    description:
+      "Well preserved 1983 1 Rupee specimen featuring clear date stamp and standard Indian Lion Capital obverse.",
+  },
+  {
+    id: "p-025",
+    name: "Republic India 1970 1 Rupee Vintage Series",
+    year: "1970",
+    price: 490,
+    originalPrice: 750,
+    image: "/images/coins/1 Rs 1970 B.png",
+    backImage: "/images/coins/1 Rs 1970 F.png",
+    category: "Princely States",
+    description:
+      "Vintage 1970 1 Rupee coin preserved in coin sleeve, featuring authentic mint patina and sharp edge reeding.",
+  },
+  {
+    id: "p-026",
+    name: "Republic India 1955 Two Annas Reverse View Variant",
+    year: "1955",
+    price: 2350,
+    originalPrice: 3100,
+    image: "/images/coins/2 anna 1955 B.png",
+    backImage: "/images/coins/2 anna 1955 F.png",
+    category: "Rare",
+    description:
+      "A prized two annas piece with distinct 1955 mint mark and bull engraving, highly sought after by vintage Indian coin enthusiasts.",
+  },
+  {
+    id: "p-027",
+    name: "Republic India 1953 1 Pice Galloping Horse Heritage Issue",
+    year: "1953",
+    price: 890,
+    originalPrice: 1300,
+    image: "/images/coins/1 Pice 1953 B.png",
+    backImage: "/images/coins/1 Pice 1953 F.png",
+    category: "Error Coin",
+    isNew: true,
+    description:
+      "Classic 1953 One Pice showing pristine galloping horse design, high rims, and clear lettering.",
   },
 ];
+
 function calcDiscount(price: number, originalPrice?: number): number {
   if (!originalPrice || originalPrice <= price) return 0;
-
   return Math.round(((originalPrice - price) / originalPrice) * 100);
 }
 
@@ -280,9 +367,26 @@ export const allProducts: Product[] = rawProducts.map((p) => ({
   discount: calcDiscount(p.price, p.originalPrice),
 }));
 
+export function getProductById(id: string): Product | undefined {
+  return allProducts.find((p) => p.id === id);
+}
+
 export function getProductsByCategory(category: CoinCategory | "all"): Product[] {
   if (category === "all") return allProducts;
   return allProducts.filter((p) => p.category === category);
+}
+
+export function getRelatedProducts(currentProduct: Product, limit: number = 5): Product[] {
+  const sameCategory = allProducts.filter(
+    (p) => p.category === currentProduct.category && p.id !== currentProduct.id
+  );
+  if (sameCategory.length >= limit) {
+    return sameCategory.slice(0, limit);
+  }
+  const otherCoins = allProducts.filter(
+    (p) => p.id !== currentProduct.id && !sameCategory.some((sc) => sc.id === p.id)
+  );
+  return [...sameCategory, ...otherCoins].slice(0, limit);
 }
 
 export type SortOption =

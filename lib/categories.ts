@@ -25,50 +25,50 @@ export const CATEGORIES: CategoryItem[] = [
     name: "Princely States",
     slug: "princely-states",
     href: "/all-coins?category=princely-states",
-    image: "/images/coins/2 Paise 1969 B.png",
+    image: "/images/coins/1 Rs 1970 B.png",
   },
   {
     name: "Ancient India",
     slug: "ancient-india",
     href: "/all-coins?category=ancient-india",
-    image: "/images/coins/20 Paisa B.png",
+    image: "/images/coins/50 Paise 1957 B.png",
   },
   {
     name: "Commemorative Coins",
     slug: "commemorative-coins",
     href: "/all-coins?category=commemorative-coins",
-    image: "/images/coins/10 Rs 25th Ani Ind F.png",
+    image: "/images/coins/5 Rs 1st WAR F.png",
   },
   {
     name: "Rare",
     slug: "rare",
     href: "/all-coins?category=rare",
-    image: "/images/coins/10 Rs 2006 VIP Set B.png",
+    image: "/images/coins/50 Paise 1959 B.png",
   },
   {
     name: "Scare",
     slug: "scare",
     href: "/all-coins?category=scare",
-    image: "/images/coins/50 Paise 1959 B.png",
+    image: "/images/coins/50 Paise 1986 F.png",
   },
   {
     name: "Medieval India",
     slug: "medieval-india",
     href: "/all-coins?category=medieval-india",
-    image: "/images/coins/5 Rs 1st WAR F.png",
+    image: "/images/coins/5 Rs 1st WAR B.png",
   },
   {
     name: "Error Coin",
     slug: "error-coins",
     href: "/all-coins?category=error-coins",
-    image: "/images/coins/10 Cross B Mumbai Mint.png",
+    image: "/images/coins/1 Pice 1953 B.png",
     shortName: "Error Coins",
   },
   {
     name: "Die Variety",
     slug: "die-variety",
     href: "/all-coins?category=die-variety",
-    image: "/images/coins/25 paise 1993 F new.png",
+    image: "/images/coins/25 Paise 1993 F.png",
   },
 ];
 
@@ -93,4 +93,3 @@ export function getCategoryBySlug(slug: string): CategoryItem | undefined {
     (c) => c.slug.toLowerCase() === normalized || c.name.toLowerCase() === normalized
   );
 }
-

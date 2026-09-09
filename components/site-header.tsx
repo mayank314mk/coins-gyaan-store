@@ -5,12 +5,10 @@ import Image from "next/image";
 import Link from "next/link";
 import { NavLink } from "./nav-link";
 import { CATEGORIES, DESKTOP_NAV_CATEGORIES } from "../lib/categories";
+import { useCart } from "../context/cart-context";
+import { useWishlist } from "../context/wishlist-context";
 
 const trustItems = [
-  {
-    label: "Trusted by 10,000+ Collectors Across India",
-    icon: ShieldIcon,
-  },
   {
     label: "100% Authentic Coins",
     icon: CheckIcon,
@@ -22,6 +20,10 @@ const trustItems = [
   {
     label: "Pan India Delivery",
     icon: TruckIcon,
+  },
+  {
+    label: "Safe Payments",
+    icon: SafePaymentIcon,
   },
 ] as const;
 
@@ -224,9 +226,22 @@ function SearchBar({ className = "" }: { className?: string }) {
 }
 
 function ActionLinks({ className = "" }: { className?: string }) {
-  const actions: { label: string; href: string; icon: React.ComponentType<{ className?: string }>; badge?: string; iconClassName?: string }[] = [
-    { label: "Wishlist", href: "#wishlist", icon: HeartIcon },
-    { label: "Cart", href: "#cart", icon: CartIcon, badge: "0" },
+  const { itemCount: cartCount, isHydrated: isCartHydrated } = useCart();
+  const { itemCount: wishlistCount, isHydrated: isWishlistHydrated } = useWishlist();
+
+  const cartBadge = isCartHydrated ? String(cartCount) : "0";
+  const wishlistBadge =
+    isWishlistHydrated && wishlistCount > 0 ? String(wishlistCount) : undefined;
+
+  const actions: {
+    label: string;
+    href: string;
+    icon: React.ComponentType<{ className?: string }>;
+    badge?: string;
+    iconClassName?: string;
+  }[] = [
+    { label: "Wishlist", href: "/wishlist", icon: HeartIcon, badge: wishlistBadge },
+    { label: "Cart", href: "/cart", icon: CartIcon, badge: cartBadge },
     { label: "Login / Signup", href: "#login", icon: UserIcon, iconClassName: "h-5.5 w-5.5" },
   ];
 
@@ -272,11 +287,13 @@ function SearchIcon({ className = "h-4 w-4" }: { className?: string }) {
   );
 }
 
-function ShieldIcon() {
+function SafePaymentIcon() {
   return (
     <svg viewBox="0 0 24 24" aria-hidden="true" className="h-4 w-4 text-accent" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M12 3 19 6v5c0 4.6-3.1 8.7-7 10-3.9-1.3-7-5.4-7-10V6l7-3Z" />
-      <path d="m9.5 12 1.9 1.9L15 10.3" />
+      <rect x="2" y="5" width="20" height="14" rx="2" />
+      <path d="M2 10h20" />
+      <path d="M6 15h4" />
+      <path d="M14 15h1" />
     </svg>
   );
 }

@@ -65,7 +65,7 @@ export function TrendingSection() {
           {trendingProducts.map((product) => (
             <div
               key={product.id}
-              className="w-[66vw] max-w-[240px] flex-none sm:w-[200px] lg:w-auto lg:flex-auto"
+              className="w-[66vw] max-w-[300px] flex-none sm:w-[200px] lg:w-auto lg:flex-auto"
             >
               <ProductCard {...product} />
             </div>
@@ -171,7 +171,7 @@ const benefits = [
   [ShieldIcon, "100% Authentic Coins", "Guaranteed genuine coins"],
   [PackageIcon, "Secure Packaging", "Safe and tamper-proof packaging"],
   [TruckIcon, "Pan India Delivery", "Fast and reliable delivery"],
-  [SupportIcon, "Easy Returns & Support", "Customer support and return policy"],
+  [SafePaymentIcon, "Safe Payments", "Secure payment processing"],
 ] as const;
 
 export function BenefitsSection() {
@@ -367,14 +367,14 @@ function SectionHeading({
             onClick={onActionClick}
             className="text-sm font-semibold text-accent transition-colors hover:text-brand"
           >
-            {action} <span aria-hidden="true">-&gt;</span>
+            {action}
           </button>
         ) : (
           <Link
             href={actionHref}
             className="text-sm font-semibold text-accent transition-colors hover:text-brand"
           >
-            {action} <span aria-hidden="true">-&gt;</span>
+            {action}
           </Link>
         )
       )}
@@ -455,11 +455,13 @@ function TruckIcon({ className }: { className?: string }) {
   );
 }
 
-function SupportIcon({ className }: { className?: string }) {
+function SafePaymentIcon({ className }: { className?: string }) {
   return (
     <IconShell className={className}>
-      <path d="M5 14v-2a7 7 0 0 1 14 0v2" />
-      <path d="M5 14v3h3v-4H5M19 14v3h-3v-4h3M16 19c-1 1-2 1-4 1" />
+      <rect x="2" y="5" width="20" height="14" rx="2" />
+      <path d="M2 10h20" />
+      <path d="M6 15h4" />
+      <path d="M14 15h1" />
     </IconShell>
   );
 }
