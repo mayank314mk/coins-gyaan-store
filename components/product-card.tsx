@@ -38,6 +38,12 @@ export function ProductCard({ id, name, price, originalPrice, image, discount }:
     >
       <button
         type="button"
+        onClick={(e) => {
+          e.preventDefault();
+          e.stopPropagation();
+        }}
+        aria-label={`Add ${name} to wishlist`}
+        className="cursor-pointer absolute right-2.5 top-2.5 z-10 grid h-8 w-8 place-items-center rounded-full text-accent transition-transform hover:bg-white"
         onClick={handleToggleWishlist}
         aria-label={isWishlisted ? `Remove ${name} from wishlist` : `Add ${name} to wishlist`}
         className={`cursor-pointer absolute right-2.5 top-2.5 z-10 grid h-8 w-8 place-items-center rounded-full transition-all ${
@@ -46,6 +52,7 @@ export function ProductCard({ id, name, price, originalPrice, image, discount }:
             : "text-accent hover:bg-white"
         }`}
       >
+        <HeartIcon />
         <HeartIcon filled={isWishlisted} />
       </button>
 
@@ -83,6 +90,11 @@ export function ProductCard({ id, name, price, originalPrice, image, discount }:
 
       <button
         type="button"
+        onClick={(e) => {
+          e.preventDefault();
+          e.stopPropagation();
+        }}
+        className="cursor-pointer mt-auto h-9 w-full rounded-md bg-brand text-sm font-semibold text-white transition-colors hover:bg-brand-strong"
         onClick={handleAddToCart}
         className={`cursor-pointer mt-auto h-9 w-full rounded-md text-sm font-semibold text-white transition-all ${
           justAdded
@@ -90,17 +102,21 @@ export function ProductCard({ id, name, price, originalPrice, image, discount }:
             : "bg-brand hover:bg-brand-strong"
         }`}
       >
+        Add to Cart
         {justAdded ? "Added to Cart ✓" : "Add to Cart"}
       </button>
     </Link>
   );
 }
 
+function HeartIcon() {
 function HeartIcon({ filled = false }: { filled?: boolean }) {
   return (
     <svg
       viewBox="0 0 24 24"
       aria-hidden="true"
+      className="h-5 w-5 shrink-0 text-accent"
+      fill="none"
       className="h-5 w-5 shrink-0 text-accent transition-transform"
       fill={filled ? "currentColor" : "none"}
       stroke="currentColor"

@@ -27,6 +27,7 @@ export function CoinDetailView({
   const [selectedImage, setSelectedImage] = useState<"front" | "back">(
     "front"
   );
+  const [isWishlisted, setIsWishlisted] = useState(false);
   const [quantity, setQuantity] = useState(1);
   const [addedToCart, setAddedToCart] = useState(false);
 
@@ -403,8 +404,10 @@ export function CoinDetailView({
               </p>
             </div>
 
+            {/* Wishlist & Actions (Quantity removed: only 1 product available per listing) */}
             {/* Wishlist & Actions with Quantity */}
             <div className="mt-6 border-t border-gray-100 pt-6">
+              <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
               <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                 {/* Quantity Controls */}
                 <div className="flex items-center gap-3">
@@ -438,12 +441,14 @@ export function CoinDetailView({
                 {/* Wishlist */}
                 <button
                   type="button"
+                  onClick={() => setIsWishlisted(!isWishlisted)}
                   onClick={() => toggleWishlist(product.id)}
                   aria-label={
                     isWishlisted
                       ? "Remove from wishlist"
                       : "Add to wishlist"
                   }
+                  className={`inline-flex items-center justify-center gap-2 rounded-lg border px-4 py-2 text-sm font-semibold transition-all ${
                   className={`inline-flex items-center justify-center gap-2 rounded-lg border px-4 py-2 text-sm font-semibold transition-all cursor-pointer ${
                     isWishlisted
                       ? "border-accent bg-accent/10 text-accent"
@@ -467,6 +472,7 @@ export function CoinDetailView({
               <div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2">
                 <button
                   type="button"
+                  className="flex h-12 w-full cursor-pointer items-center justify-center rounded-xl bg-brand text-base font-bold text-white shadow-sm transition-all hover:bg-brand-strong hover:shadow"
                   onClick={() => {
                     addToCart(product.id, quantity);
                     setAddedToCart(true);
@@ -478,6 +484,7 @@ export function CoinDetailView({
                       : "bg-brand hover:bg-brand-strong hover:shadow"
                   }`}
                 >
+                  Add to Cart
                   {addedToCart ? "Added to Cart ✓" : "Add to Cart"}
                 </button>
 

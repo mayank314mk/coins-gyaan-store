@@ -226,6 +226,9 @@ function SearchBar({ className = "" }: { className?: string }) {
 }
 
 function ActionLinks({ className = "" }: { className?: string }) {
+  const actions: { label: string; href: string; icon: React.ComponentType<{ className?: string }>; badge?: string; iconClassName?: string }[] = [
+    { label: "Wishlist", href: "#wishlist", icon: HeartIcon },
+    { label: "Cart", href: "#cart", icon: CartIcon, badge: "0" },
   const { itemCount: cartCount, isHydrated: isCartHydrated } = useCart();
   const { itemCount: wishlistCount, isHydrated: isWishlistHydrated } = useWishlist();
 
