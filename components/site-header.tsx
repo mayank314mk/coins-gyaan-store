@@ -3,10 +3,12 @@
 import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { NavLink } from "./nav-link";
 import { CATEGORIES, DESKTOP_NAV_CATEGORIES } from "../lib/categories";
 import { useCart } from "../context/cart-context";
 import { useWishlist } from "../context/wishlist-context";
+import { authClient } from "../lib/auth-client";
 
 const trustItems = [
   {
@@ -206,31 +208,43 @@ function BrandBlock() {
 }
 
 function SearchBar({ className = "" }: { className?: string }) {
+  const router = useRouter();
+  const [query, setQuery] = useState("");
+
+  function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    const trimmedQuery = query.trim();
+    router.push(trimmedQuery ? `/search?q=${encodeURIComponent(trimmedQuery)}` : "/search");
+  }
+
   return (
-    <label className={`relative mx-0 flex w-full flex-1 max-w-225 items-center min-[930px]:mx-2 min-[930px]:max-w-75 ${className}`}>
+    <form
+      onSubmit={handleSubmit}
+      className={`relative mx-0 flex w-full flex-1 max-w-225 items-center min-[930px]:mx-2 min-[930px]:max-w-75 ${className}`}
+    >
       <span className="sr-only">Search coins, sets, years</span>
       <input
         type="search"
         placeholder="Search"
+        value={query}
+        onChange={(event) => setQuery(event.target.value)}
         className="h-11 w-full rounded-2xl border border-accent/75 bg-gray-50 px-5 pr-14 text-base text-foreground outline-none placeholder:text-text-muted/80 focus:border-accent focus:ring-2 focus:ring-accent/10 min-[930px]:h-10 min-[930px]:rounded-full min-[930px]:text-sm"
       />
       <button
-        type="button"
+        type="submit"
         className="absolute right-1 inline-flex h-8 w-8 items-center justify-center rounded-full text-accent min-[930px]:h-8 min-[930px]:w-8"
         aria-label="Search"
       >
         <SearchIcon className="h-5 w-5" />
       </button>
-    </label>
+    </form>
   );
 }
 
 function ActionLinks({ className = "" }: { className?: string }) {
-  const actions: { label: string; href: string; icon: React.ComponentType<{ className?: string }>; badge?: string; iconClassName?: string }[] = [
-    { label: "Wishlist", href: "#wishlist", icon: HeartIcon },
-    { label: "Cart", href: "#cart", icon: CartIcon, badge: "0" },
   const { itemCount: cartCount, isHydrated: isCartHydrated } = useCart();
   const { itemCount: wishlistCount, isHydrated: isWishlistHydrated } = useWishlist();
+  const { data: session } = authClient.useSession();
 
   const cartBadge = isCartHydrated ? String(cartCount) : "0";
   const wishlistBadge =
@@ -245,7 +259,12 @@ function ActionLinks({ className = "" }: { className?: string }) {
   }[] = [
     { label: "Wishlist", href: "/wishlist", icon: HeartIcon, badge: wishlistBadge },
     { label: "Cart", href: "/cart", icon: CartIcon, badge: cartBadge },
-    { label: "Login / Signup", href: "#login", icon: UserIcon, iconClassName: "h-5.5 w-5.5" },
+    {
+      label: session?.user ? (session.user.name?.split(" ")[0] || "Account") : "Login / Signup",
+      href: "/auth",
+      icon: UserIcon,
+      iconClassName: "h-5.5 w-5.5",
+    },
   ];
 
   return (
@@ -254,7 +273,7 @@ function ActionLinks({ className = "" }: { className?: string }) {
         <Link
           key={label}
           href={href}
-          className="relative flex flex-col items-center  px-0.5 py-0 text-xs font-medium text-brand-strong hover:text-accent transition-colors"
+          className="relative flex flex-col items-center px-0.5 py-0 text-xs font-medium text-brand-strong transition-colors hover:text-accent"
         >
           <span className="relative inline-flex h-7 w-9 items-center justify-center rounded-full bg-transparent">
             <Icon className={iconClassName ?? "h-5 w-5"} />
@@ -264,7 +283,9 @@ function ActionLinks({ className = "" }: { className?: string }) {
               </span>
             ) : null}
           </span>
-          <span className="site-header-action-label text-[12px] leading-tight text-inherit">{label}</span>
+          <span className="site-header-action-label text-[12px] leading-tight text-inherit">
+            {label}
+          </span>
         </Link>
       ))}
     </div>

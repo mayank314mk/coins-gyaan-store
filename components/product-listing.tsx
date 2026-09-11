@@ -11,9 +11,11 @@ const PAGE_SIZE = 20;
 export function ProductListing({
   title,
   products,
+  emptyMessage = "No coins found in this category yet.",
 }: {
   title: string;
   products: Product[];
+  emptyMessage?: string;
 }) {
   const [sort, setSort] = useState<SortOption>("new-arrivals");
   const [page, setPage] = useState(1);
@@ -56,7 +58,7 @@ export function ProductListing({
         </div>
       ) : (
         <p className="py-16 text-center text-sm text-text-muted">
-          No coins found in this category yet.
+          {emptyMessage}
         </p>
       )}
 

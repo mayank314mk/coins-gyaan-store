@@ -11,7 +11,6 @@ export function CartView() {
     items,
     itemCount,
     subtotal,
-    updateQuantity,
     removeFromCart,
     clearCart,
     isHydrated,
@@ -69,9 +68,7 @@ export function CartView() {
         <div className="grid grid-cols-1 gap-8 lg:grid-cols-12 lg:items-start">
           {/* Cart Items List */}
           <div className="lg:col-span-8 flex flex-col gap-4">
-            {items.map(({ productId, quantity, product }) => {
-              const itemTotal = product.price * quantity;
-
+            {items.map(({ productId, product }) => {
               return (
                 <div
                   key={productId}
@@ -102,59 +99,30 @@ export function CartView() {
                       >
                         {product.name}
                       </Link>
-                      <div className="mt-1 flex items-center gap-3 text-xs text-text-muted">
-                        <span>Year: {product.year}</span>
-                        <span>•</span>
-                        <span className="font-medium text-brand-strong">
-                          {formatPrice(product.price)} each
+                      <div className="mt-1">
+                        <span className="text-sm font-bold text-brand-strong sm:hidden">
+                          {formatPrice(product.price)}
                         </span>
                       </div>
                     </div>
                   </div>
 
-                  {/* Quantity Stepper & Price / Remove */}
+                  {/* Price & Remove */}
                   <div className="flex items-center justify-between border-t border-gray-100 pt-3 sm:border-t-0 sm:pt-0 sm:gap-6">
-                    {/* Quantity Control */}
-                    <div className="flex items-center rounded-lg border border-gray-200 bg-white shadow-xs">
-                      <button
-                        type="button"
-                        onClick={() => updateQuantity(productId, quantity - 1)}
-                        disabled={quantity <= 1}
-                        aria-label="Decrease quantity"
-                        className="inline-flex h-8 w-8 items-center justify-center text-sm font-medium text-brand-strong transition-colors hover:bg-gray-100 disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer rounded-l-lg"
-                      >
-                        −
-                      </button>
-                      <span className="w-8 text-center text-xs font-bold text-brand-strong select-none">
-                        {quantity}
+                    <div className="text-right hidden sm:block">
+                      <span className="text-base font-bold text-brand-strong">
+                        {formatPrice(product.price)}
                       </span>
-                      <button
-                        type="button"
-                        onClick={() => updateQuantity(productId, quantity + 1)}
-                        aria-label="Increase quantity"
-                        className="inline-flex h-8 w-8 items-center justify-center text-sm font-medium text-brand-strong transition-colors hover:bg-gray-100 cursor-pointer rounded-r-lg"
-                      >
-                        +
-                      </button>
                     </div>
 
-                    {/* Subtotal & Delete */}
-                    <div className="flex items-center gap-4">
-                      <div className="text-right">
-                        <span className="text-sm sm:text-base font-bold text-brand-strong">
-                          {formatPrice(itemTotal)}
-                        </span>
-                      </div>
-
-                      <button
-                        type="button"
-                        onClick={() => removeFromCart(productId)}
-                        aria-label={`Remove ${product.name} from cart`}
-                        className="inline-flex h-8 w-8 items-center justify-center rounded-lg text-text-muted hover:bg-red-50 hover:text-red-600 transition-colors cursor-pointer"
-                      >
-                        <TrashIcon className="h-4 w-4" />
-                      </button>
-                    </div>
+                    <button
+                      type="button"
+                      onClick={() => removeFromCart(productId)}
+                      aria-label={`Remove ${product.name} from cart`}
+                      className="inline-flex h-8 w-8 items-center justify-center rounded-lg text-text-muted hover:bg-red-50 hover:text-red-600 transition-colors cursor-pointer"
+                    >
+                      <TrashIcon className="h-4 w-4" />
+                    </button>
                   </div>
                 </div>
               );
@@ -225,22 +193,6 @@ export function CartView() {
                   </p>
                 </div>
               )}
-
-              {/* Collector Assurance features */}
-              <div className="mt-6 space-y-2 border-t border-gray-200/80 pt-5 text-xs text-text-muted">
-                <div className="flex items-center gap-2">
-                  <CheckShieldIcon className="h-4 w-4 shrink-0 text-accent" />
-                  <span>100% Genuine Numismatic Guarantee</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <SafeTruckIcon className="h-4 w-4 shrink-0 text-accent" />
-                  <span>Pan India Insured Delivery</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <SecureLockIcon className="h-4 w-4 shrink-0 text-accent" />
-                  <span>Secure & Discreet Packaging</span>
-                </div>
-              </div>
             </div>
           </div>
         </div>
@@ -313,61 +265,3 @@ function EmptyCartIcon({ className = "h-6 w-6" }: { className?: string }) {
     </svg>
   );
 }
-
-function CheckShieldIcon({ className = "h-4 w-4" }: { className?: string }) {
-  return (
-    <svg
-      viewBox="0 0 24 24"
-      aria-hidden="true"
-      className={className}
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="1.8"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
-      <path d="m9 12 2 2 4-4" />
-    </svg>
-  );
-}
-
-function SafeTruckIcon({ className = "h-4 w-4" }: { className?: string }) {
-  return (
-    <svg
-      viewBox="0 0 24 24"
-      aria-hidden="true"
-      className={className}
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="1.8"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <path d="M14 18V6a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v11a1 1 0 0 0 1 1h2" />
-      <path d="M15 18H9" />
-      <path d="M19 18h2a1 1 0 0 0 1-1v-3.65a1 1 0 0 0-.22-.624l-3.48-4.35A1 1 0 0 0 17.52 8H14v10Z" />
-      <circle cx="17" cy="18.5" r="2.5" />
-      <circle cx="7" cy="18.5" r="2.5" />
-    </svg>
-  );
-}
-
-function SecureLockIcon({ className = "h-4 w-4" }: { className?: string }) {
-  return (
-    <svg
-      viewBox="0 0 24 24"
-      aria-hidden="true"
-      className={className}
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="1.8"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <rect width="18" height="11" x="3" y="11" rx="2" ry="2" />
-      <path d="M7 11V7a5 5 0 0 1 10 0v4" />
-    </svg>
-  );
-}
-

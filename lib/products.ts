@@ -13,7 +13,6 @@ export type CoinCategory =
 export type Product = {
   id: string;
   name: string;
-  year: string;
   price: number;
   originalPrice?: number;
   image: string;
@@ -28,7 +27,6 @@ const rawProducts: Omit<Product, "discount">[] = [
   {
     id: "p-001",
     name: "Republic India 1970 1 Rupee Definitive Coin",
-    year: "1970",
     price: 550,
     originalPrice: 950,
     image: "/images/coins/1 Rs 1970 F.png",
@@ -41,7 +39,6 @@ const rawProducts: Omit<Product, "discount">[] = [
   {
     id: "p-002",
     name: "Republic India 2005 5 Rupees 75 Years of Dandi March",
-    year: "2005",
     price: 650,
     originalPrice: 900,
     image: "/images/coins/5 Rs DANDI F.png",
@@ -53,7 +50,6 @@ const rawProducts: Omit<Product, "discount">[] = [
   {
     id: "p-003",
     name: "Republic India 2007 5 Rupees 50 Years of Khadi & Village Industries",
-    year: "2007",
     price: 480,
     originalPrice: 700,
     image: "/images/coins/5 Rs KHADI F.png",
@@ -65,7 +61,6 @@ const rawProducts: Omit<Product, "discount">[] = [
   {
     id: "p-004",
     name: "Republic India 1982 1 Rupee National Integration Map Coin",
-    year: "1982",
     price: 320,
     originalPrice: 500,
     image: "/images/coins/1 Rs 1982 F.png",
@@ -78,7 +73,6 @@ const rawProducts: Omit<Product, "discount">[] = [
   {
     id: "p-005",
     name: "Republic India 1959 50 Naye Paise Rare Bombay Mint Coin",
-    year: "1959",
     price: 1650,
     originalPrice: 2200,
     image: "/images/coins/50 Paise 1959 F.png",
@@ -90,7 +84,6 @@ const rawProducts: Omit<Product, "discount">[] = [
   {
     id: "p-006",
     name: "Republic India 1993 25 Paise Rhinoceros Wildlife Issue",
-    year: "1993",
     price: 240,
     originalPrice: 380,
     image: "/images/coins/25 Paise 1993 F.png",
@@ -102,7 +95,6 @@ const rawProducts: Omit<Product, "discount">[] = [
   {
     id: "p-007",
     name: "Republic India 1957 50 Naye Paise First Year Decimal Series",
-    year: "1957",
     price: 850,
     originalPrice: 1200,
     image: "/images/coins/50 Paise 1957 F.png",
@@ -114,7 +106,6 @@ const rawProducts: Omit<Product, "discount">[] = [
   {
     id: "p-008",
     name: "Republic India 2007 5 Rupees 150 Years of First War of Independence",
-    year: "2007",
     price: 350,
     originalPrice: 500,
     image: "/images/coins/5 Rs 1st WAR F.png",
@@ -127,7 +118,6 @@ const rawProducts: Omit<Product, "discount">[] = [
   {
     id: "p-009",
     name: "Republic India 2021 5 Rupees Azadi Ka Amrit Mahotsav Definitive",
-    year: "2021",
     price: 150,
     originalPrice: 220,
     image: "/images/coins/5 Rs 2021 F.png",
@@ -139,7 +129,6 @@ const rawProducts: Omit<Product, "discount">[] = [
   {
     id: "p-010",
     name: "Republic India 1996 2 Rupees Netaji Subhas Chandra Bose Centenary",
-    year: "1996",
     price: 280,
     image: "/images/coins/2 Rs 1996 F.png",
     backImage: "/images/coins/2 Rs 1996 B.png",
@@ -150,7 +139,6 @@ const rawProducts: Omit<Product, "discount">[] = [
   {
     id: "p-011",
     name: "Republic India 1998 2 Rupees Deshbandhu Chittaranjan Das",
-    year: "1998",
     price: 240,
     image: "/images/coins/2 Rs 1998 F.png",
     backImage: "/images/coins/2 Rs 1998 B.png",
@@ -161,7 +149,6 @@ const rawProducts: Omit<Product, "discount">[] = [
   {
     id: "p-012",
     name: "Republic India 1985 1 Rupee International Youth Year Commemorative",
-    year: "1985",
     price: 450,
     originalPrice: 650,
     image: "/images/coins/1 Rs 1985 F.png",
@@ -174,7 +161,6 @@ const rawProducts: Omit<Product, "discount">[] = [
   {
     id: "p-013",
     name: "Republic India 1991 1 Rupee Tourism Year Commemorative Coin",
-    year: "1991",
     price: 180,
     originalPrice: 280,
     image: "/images/coins/1 Rs 1991 F.png",
@@ -186,7 +172,6 @@ const rawProducts: Omit<Product, "discount">[] = [
   {
     id: "p-014",
     name: "Republic India 1986 50 Paise Fisheries Development Issue",
-    year: "1986",
     price: 340,
     originalPrice: 480,
     image: "/images/coins/50 Paise 1986 F.png",
@@ -199,7 +184,6 @@ const rawProducts: Omit<Product, "discount">[] = [
   {
     id: "p-015",
     name: "Republic India 1988 50 Paise Definitive Series Coin",
-    year: "1988",
     price: 210,
     originalPrice: 320,
     image: "/images/coins/50 Paise 1988 F.png",
@@ -211,7 +195,6 @@ const rawProducts: Omit<Product, "discount">[] = [
   {
     id: "p-016",
     name: "Republic India 1983 1 Rupee Definitive Cupro-Nickel Coin",
-    year: "1983",
     price: 260,
     originalPrice: 390,
     image: "/images/coins/1 Rs 1983 F.png",
@@ -223,7 +206,6 @@ const rawProducts: Omit<Product, "discount">[] = [
   {
     id: "p-017",
     name: "Republic India 1980 25 Paise Definitive Issue",
-    year: "1980",
     price: 190,
     originalPrice: 300,
     image: "/images/coins/25 Paise 1980 F.png",
@@ -235,7 +217,6 @@ const rawProducts: Omit<Product, "discount">[] = [
   {
     id: "p-018",
     name: "Republic India 1996 50 Paise Sardar Vallabhbhai Patel",
-    year: "1996",
     price: 220,
     originalPrice: 320,
     image: "/images/coins/50 Paise 1996 CROP F.png",
@@ -247,7 +228,6 @@ const rawProducts: Omit<Product, "discount">[] = [
   {
     id: "p-019",
     name: "Republic India 1982 25 Paise IX Asian Games Delhi Commemorative",
-    year: "1982",
     price: 290,
     originalPrice: 450,
     image: "/images/coins/25 Paise 1982 F.png",
@@ -259,7 +239,6 @@ const rawProducts: Omit<Product, "discount">[] = [
   {
     id: "p-020",
     name: "Republic India 1955 Two Annas Bull Type Rare Coin",
-    year: "1955",
     price: 2400,
     originalPrice: 3200,
     image: "/images/coins/2 anna 1955 F.png",
@@ -271,7 +250,6 @@ const rawProducts: Omit<Product, "discount">[] = [
   {
     id: "p-021",
     name: "Republic India 1953 1 Pice Single Paisa Galloping Horse",
-    year: "1953",
     price: 890,
     originalPrice: 1300,
     image: "/images/coins/1 Pice 1953 F.png",
@@ -284,7 +262,6 @@ const rawProducts: Omit<Product, "discount">[] = [
   {
     id: "p-022",
     name: "Republic India 1957 50 Naye Paise Choice Uncirculated",
-    year: "1957",
     price: 780,
     originalPrice: 1100,
     image: "/images/coins/50 Paise 1957 B.png",
@@ -297,7 +274,6 @@ const rawProducts: Omit<Product, "discount">[] = [
   {
     id: "p-023",
     name: "Republic India 1986 50 Paise Special Mint Strike",
-    year: "1986",
     price: 340,
     originalPrice: 500,
     image: "/images/coins/50 Paise 1986 B.png",
@@ -309,7 +285,6 @@ const rawProducts: Omit<Product, "discount">[] = [
   {
     id: "p-024",
     name: "Republic India 1983 1 Rupee Collector Condition",
-    year: "1983",
     price: 180,
     originalPrice: 280,
     image: "/images/coins/1 Rs 1983 B.png",
@@ -321,7 +296,6 @@ const rawProducts: Omit<Product, "discount">[] = [
   {
     id: "p-025",
     name: "Republic India 1970 1 Rupee Vintage Series",
-    year: "1970",
     price: 490,
     originalPrice: 750,
     image: "/images/coins/1 Rs 1970 B.png",
@@ -333,7 +307,6 @@ const rawProducts: Omit<Product, "discount">[] = [
   {
     id: "p-026",
     name: "Republic India 1955 Two Annas Reverse View Variant",
-    year: "1955",
     price: 2350,
     originalPrice: 3100,
     image: "/images/coins/2 anna 1955 B.png",
@@ -345,7 +318,6 @@ const rawProducts: Omit<Product, "discount">[] = [
   {
     id: "p-027",
     name: "Republic India 1953 1 Pice Galloping Horse Heritage Issue",
-    year: "1953",
     price: 890,
     originalPrice: 1300,
     image: "/images/coins/1 Pice 1953 B.png",
@@ -374,6 +346,17 @@ export function getProductById(id: string): Product | undefined {
 export function getProductsByCategory(category: CoinCategory | "all"): Product[] {
   if (category === "all") return allProducts;
   return allProducts.filter((p) => p.category === category);
+}
+
+export function searchProducts(query: string): Product[] {
+  const normalizedQuery = query.trim().toLowerCase();
+  if (!normalizedQuery) return [];
+
+  return allProducts.filter((product) =>
+    [product.name, product.category, product.description]
+      .filter(Boolean)
+      .some((field) => field!.toLowerCase().includes(normalizedQuery))
+  );
 }
 
 export function getRelatedProducts(currentProduct: Product, limit: number = 5): Product[] {

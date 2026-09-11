@@ -30,7 +30,7 @@ export async function generateMetadata({
     title: `${product.name} | Coins Gyaan Store`,
     description:
       product.description ??
-      `Buy authentic collectible ${product.name} (${product.year}) at Coins Gyaan Store.`,
+      `Buy authentic collectible ${product.name} at Coins Gyaan Store.`,
   };
 }
 

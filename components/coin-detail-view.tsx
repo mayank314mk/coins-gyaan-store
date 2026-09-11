@@ -21,17 +21,16 @@ export function CoinDetailView({
   isTrendingFallback?: boolean;
 }) {
   const router = useRouter();
-  const { addToCart } = useCart();
+  const { addToCart, isInCart } = useCart();
   const { isInWishlist, toggleWishlist } = useWishlist();
 
   const [selectedImage, setSelectedImage] = useState<"front" | "back">(
     "front"
   );
-  const [isWishlisted, setIsWishlisted] = useState(false);
-  const [quantity, setQuantity] = useState(1);
-  const [addedToCart, setAddedToCart] = useState(false);
+  const [cartFeedback, setCartFeedback] = useState<"added" | "already" | null>(null);
 
   const isWishlisted = isInWishlist(product.id);
+  const inCart = isInCart(product.id);
 
   const ZOOM_FACTOR = 3;
 
@@ -400,55 +399,22 @@ export function CoinDetailView({
 
               <p className="mt-2 text-sm leading-relaxed text-text-muted sm:text-base">
                 {product.description ??
-                  `Genuine collectible ${product.year} coin from the ${product.category} category. Preserved with authentic historical patina and crisp detailing suitable for discerning coin collectors.`}
+                  `Genuine collectible coin from the ${product.category} category. Preserved with authentic historical patina and crisp detailing suitable for discerning coin collectors.`}
               </p>
             </div>
 
-            {/* Wishlist & Actions (Quantity removed: only 1 product available per listing) */}
-            {/* Wishlist & Actions with Quantity */}
+            {/* Wishlist & Actions */}
             <div className="mt-6 border-t border-gray-100 pt-6">
-              <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
-              <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-                {/* Quantity Controls */}
-                <div className="flex items-center gap-3">
-                  <span className="text-xs font-bold uppercase tracking-wider text-brand-strong">
-                    Quantity:
-                  </span>
-                  <div className="flex items-center rounded-lg border border-gray-200 bg-white shadow-xs">
-                    <button
-                      type="button"
-                      onClick={() => setQuantity((prev) => Math.max(1, prev - 1))}
-                      disabled={quantity <= 1}
-                      aria-label="Decrease quantity"
-                      className="inline-flex h-9 w-9 items-center justify-center text-base font-medium text-brand-strong transition-colors hover:bg-gray-100 disabled:opacity-35 disabled:cursor-not-allowed cursor-pointer rounded-l-lg"
-                    >
-                      −
-                    </button>
-                    <span className="w-10 text-center text-sm font-bold text-brand-strong select-none">
-                      {quantity}
-                    </span>
-                    <button
-                      type="button"
-                      onClick={() => setQuantity((prev) => prev + 1)}
-                      aria-label="Increase quantity"
-                      className="inline-flex h-9 w-9 items-center justify-center text-base font-medium text-brand-strong transition-colors hover:bg-gray-100 cursor-pointer rounded-r-lg"
-                    >
-                      +
-                    </button>
-                  </div>
-                </div>
-
-                {/* Wishlist */}
+              <div className="flex items-center justify-between">
+                {/* Wishlist Button */}
                 <button
                   type="button"
-                  onClick={() => setIsWishlisted(!isWishlisted)}
                   onClick={() => toggleWishlist(product.id)}
                   aria-label={
                     isWishlisted
                       ? "Remove from wishlist"
                       : "Add to wishlist"
                   }
-                  className={`inline-flex items-center justify-center gap-2 rounded-lg border px-4 py-2 text-sm font-semibold transition-all ${
                   className={`inline-flex items-center justify-center gap-2 rounded-lg border px-4 py-2 text-sm font-semibold transition-all cursor-pointer ${
                     isWishlisted
                       ? "border-accent bg-accent/10 text-accent"
@@ -472,26 +438,41 @@ export function CoinDetailView({
               <div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2">
                 <button
                   type="button"
-                  className="flex h-12 w-full cursor-pointer items-center justify-center rounded-xl bg-brand text-base font-bold text-white shadow-sm transition-all hover:bg-brand-strong hover:shadow"
                   onClick={() => {
-                    addToCart(product.id, quantity);
-                    setAddedToCart(true);
-                    setTimeout(() => setAddedToCart(false), 1500);
+                    if (inCart) {
+                      setCartFeedback("already");
+                      setTimeout(() => setCartFeedback(null), 2000);
+                      return;
+                    }
+                    addToCart(product.id);
+                    setCartFeedback("added");
+                    setTimeout(() => setCartFeedback(null), 2000);
                   }}
                   className={`flex h-12 w-full cursor-pointer items-center justify-center rounded-xl text-base font-bold text-white shadow-sm transition-all ${
-                    addedToCart
+                    cartFeedback === "added"
                       ? "bg-accent scale-[0.99]"
+                      : cartFeedback === "already"
+                      ? "bg-brand-strong text-amber-200 scale-[0.99]"
+                      : inCart
+                      ? "bg-brand/90 hover:bg-brand-strong hover:shadow"
                       : "bg-brand hover:bg-brand-strong hover:shadow"
                   }`}
                 >
-                  Add to Cart
-                  {addedToCart ? "Added to Cart ✓" : "Add to Cart"}
+                  {cartFeedback === "added"
+                    ? "Added to Cart ✓"
+                    : cartFeedback === "already"
+                    ? "Already added to your cart"
+                    : inCart
+                    ? "Already in Cart"
+                    : "Add to Cart"}
                 </button>
 
                 <button
                   type="button"
                   onClick={() => {
-                    addToCart(product.id, quantity);
+                    if (!inCart) {
+                      addToCart(product.id);
+                    }
                     router.push("/cart");
                   }}
                   className="flex h-12 w-full cursor-pointer items-center justify-center rounded-xl bg-accent text-base font-bold text-white shadow-sm transition-all hover:bg-accent/90 hover:shadow"

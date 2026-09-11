@@ -11,7 +11,6 @@ export function WishlistView() {
     items,
     itemCount,
     clearWishlist,
-    moveToCart,
     isHydrated,
   } = useWishlist();
   const { addToCart } = useCart();
@@ -37,7 +36,7 @@ export function WishlistView() {
   function handleMoveAllToCart() {
     if (items.length === 0) return;
     for (const item of items) {
-      addToCart(item.id, 1);
+      addToCart(item.id);
     }
     clearWishlist();
     setMovedAllNotification(true);
@@ -100,16 +99,7 @@ export function WishlistView() {
         <div>
           <div className="grid grid-cols-2 gap-3 sm:gap-4 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
             {items.map((product) => (
-              <div key={product.id} className="flex flex-col gap-2">
-                <ProductCard {...product} />
-                <button
-                  type="button"
-                  onClick={() => moveToCart(product.id)}
-                  className="inline-flex h-8 w-full cursor-pointer items-center justify-center rounded-lg border border-accent/40 bg-white text-xs font-semibold text-accent transition-all hover:bg-accent hover:text-white"
-                >
-                  Move to Cart
-                </button>
-              </div>
+              <ProductCard key={product.id} {...product} />
             ))}
           </div>
 

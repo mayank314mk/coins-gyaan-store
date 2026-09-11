@@ -9,14 +9,8 @@ import React, {
 } from "react";
 import { getProductById, type Product } from "../lib/products";
 
-export interface CartItem {
-  productId: string;
-  quantity: number;
-}
-
 export interface CartItemWithProduct {
   productId: string;
-  quantity: number;
   product: Product;
 }
 
@@ -25,16 +19,16 @@ interface CartContextValue {
   itemCount: number;
   subtotal: number;
   isHydrated: boolean;
-  addToCart: (productId: string, quantity?: number) => void;
-  updateQuantity: (productId: string, quantity: number) => void;
+  isInCart: (productId: string) => boolean;
+  addToCart: (productId: string) => boolean;
   removeFromCart: (productId: string) => void;
   clearCart: () => void;
 }
 
 const STORAGE_KEY = "coins_gyaan_cart";
-const EMPTY_CART: CartItem[] = [];
+const EMPTY_CART: string[] = [];
 
-let memoryCart: CartItem[] = [];
+let memoryCart: string[] = [];
 let isInitialized = false;
 const listeners = new Set<() => void>();
 
@@ -44,7 +38,7 @@ function emitChange() {
   }
 }
 
-function getStoredCart(): CartItem[] {
+function getStoredCart(): string[] {
   if (typeof window === "undefined") return EMPTY_CART;
   if (!isInitialized) {
     isInitialized = true;
@@ -53,20 +47,14 @@ function getStoredCart(): CartItem[] {
       if (stored) {
         const parsed = JSON.parse(stored);
         if (Array.isArray(parsed)) {
-          const validated: CartItem[] = [];
+          const validated: string[] = [];
           for (const item of parsed) {
-            if (
-              item &&
-              typeof item.productId === "string" &&
-              typeof item.quantity === "number" &&
-              item.quantity >= 1
-            ) {
-              const product = getProductById(item.productId);
+            // Handle both legacy { productId: "..." } and string ID
+            const id = typeof item === "string" ? item : item?.productId;
+            if (typeof id === "string" && !validated.includes(id)) {
+              const product = getProductById(id);
               if (product) {
-                validated.push({
-                  productId: item.productId,
-                  quantity: Math.floor(item.quantity),
-                });
+                validated.push(id);
               }
             }
           }
@@ -80,11 +68,11 @@ function getStoredCart(): CartItem[] {
   return memoryCart;
 }
 
-function saveCart(newItems: CartItem[]) {
-  memoryCart = newItems;
+function saveCart(newIds: string[]) {
+  memoryCart = newIds;
   if (typeof window !== "undefined") {
     try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(newItems));
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(newIds));
     } catch {
       // Ignore storage errors
     }
@@ -113,7 +101,7 @@ const noopSubscribe = () => () => {};
 const CartContext = createContext<CartContextValue | null>(null);
 
 export function CartProvider({ children }: { children: React.ReactNode }) {
-  const rawItems = useSyncExternalStore(
+  const productIds = useSyncExternalStore(
     cartSubscribe,
     getStoredCart,
     () => EMPTY_CART
@@ -125,39 +113,30 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     () => false
   );
 
-  const addToCart = useCallback((productId: string, quantity = 1) => {
-    if (quantity < 1) return;
+  const isInCart = useCallback(
+    (productId: string) => {
+      return productIds.includes(productId);
+    },
+    [productIds]
+  );
+
+  const addToCart = useCallback((productId: string): boolean => {
     const product = getProductById(productId);
-    if (!product) return;
+    if (!product) return false;
 
     const current = getStoredCart();
-    const existingIndex = current.findIndex((item) => item.productId === productId);
-    if (existingIndex > -1) {
-      const updated = [...current];
-      updated[existingIndex] = {
-        ...updated[existingIndex],
-        quantity: updated[existingIndex].quantity + quantity,
-      };
-      saveCart(updated);
-    } else {
-      saveCart([...current, { productId, quantity }]);
+    if (current.includes(productId)) {
+      // Already in cart: do NOT duplicate
+      return false;
     }
-  }, []);
 
-  const updateQuantity = useCallback((productId: string, quantity: number) => {
-    if (quantity < 1) return;
-    const current = getStoredCart();
-    const updated = current.map((item) =>
-      item.productId === productId
-        ? { ...item, quantity: Math.floor(quantity) }
-        : item
-    );
-    saveCart(updated);
+    saveCart([...current, productId]);
+    return true;
   }, []);
 
   const removeFromCart = useCallback((productId: string) => {
     const current = getStoredCart();
-    saveCart(current.filter((item) => item.productId !== productId));
+    saveCart(current.filter((id) => id !== productId));
   }, []);
 
   const clearCart = useCallback(() => {
@@ -165,26 +144,23 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   const items = useMemo(() => {
-    return rawItems
-      .map((item) => {
-        const product = getProductById(item.productId);
+    return productIds
+      .map((id) => {
+        const product = getProductById(id);
         if (!product) return null;
         return {
-          productId: item.productId,
-          quantity: item.quantity,
+          productId: id,
           product,
         };
       })
       .filter((item): item is CartItemWithProduct => item !== null);
-  }, [rawItems]);
+  }, [productIds]);
 
-  const itemCount = useMemo(() => {
-    return items.reduce((total, item) => total + item.quantity, 0);
-  }, [items]);
+  const itemCount = items.length;
 
   const subtotal = useMemo(() => {
     return items.reduce(
-      (total, item) => total + item.product.price * item.quantity,
+      (total, item) => total + item.product.price,
       0
     );
   }, [items]);
@@ -195,8 +171,8 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
       itemCount,
       subtotal,
       isHydrated,
+      isInCart,
       addToCart,
-      updateQuantity,
       removeFromCart,
       clearCart,
     }),
@@ -205,8 +181,8 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
       itemCount,
       subtotal,
       isHydrated,
+      isInCart,
       addToCart,
-      updateQuantity,
       removeFromCart,
       clearCart,
     ]
@@ -222,4 +198,3 @@ export function useCart() {
   }
   return context;
 }
-

@@ -139,7 +139,7 @@ export function WishlistProvider({ children }: { children: React.ReactNode }) {
 
   const moveToCart = useCallback(
     (productId: string) => {
-      addToCart(productId, 1);
+      addToCart(productId);
       const current = getStoredWishlist();
       saveWishlist(current.filter((id) => id !== productId));
     },

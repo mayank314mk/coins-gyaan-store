@@ -8,26 +8,44 @@ import { formatPrice } from "../lib/products";
 import { useCart } from "../context/cart-context";
 import { useWishlist } from "../context/wishlist-context";
 
-export function ProductCard({ id, name, price, originalPrice, image, discount }: Product) {
-  const { addToCart } = useCart();
+export function ProductCard({
+  id,
+  name,
+  price,
+  originalPrice,
+  image,
+  discount,
+}: Product) {
+  const { addToCart, isInCart } = useCart();
   const { isInWishlist, toggleWishlist } = useWishlist();
-  const [justAdded, setJustAdded] = useState(false);
+  const [feedback, setFeedback] = useState<"added" | "already" | null>(null);
 
   const isWishlisted = isInWishlist(id);
+  const inCart = isInCart(id);
 
   function handleAddToCart(e: React.MouseEvent) {
     e.preventDefault();
     e.stopPropagation();
-    addToCart(id, 1);
-    setJustAdded(true);
+
+    if (inCart) {
+      setFeedback("already");
+      setTimeout(() => {
+        setFeedback(null);
+      }, 1500);
+      return;
+    }
+
+    addToCart(id);
+    setFeedback("added");
     setTimeout(() => {
-      setJustAdded(false);
-    }, 1200);
+      setFeedback(null);
+    }, 1500);
   }
 
   function handleToggleWishlist(e: React.MouseEvent) {
     e.preventDefault();
     e.stopPropagation();
+
     toggleWishlist(id);
   }
 
@@ -38,21 +56,16 @@ export function ProductCard({ id, name, price, originalPrice, image, discount }:
     >
       <button
         type="button"
-        onClick={(e) => {
-          e.preventDefault();
-          e.stopPropagation();
-        }}
-        aria-label={`Add ${name} to wishlist`}
-        className="cursor-pointer absolute right-2.5 top-2.5 z-10 grid h-8 w-8 place-items-center rounded-full text-accent transition-transform hover:bg-white"
         onClick={handleToggleWishlist}
-        aria-label={isWishlisted ? `Remove ${name} from wishlist` : `Add ${name} to wishlist`}
-        className={`cursor-pointer absolute right-2.5 top-2.5 z-10 grid h-8 w-8 place-items-center rounded-full transition-all ${
+        aria-label={
           isWishlisted
-            ? "hover:bg-white"
-            : "text-accent hover:bg-white"
+            ? `Remove ${name} from wishlist`
+            : `Add ${name} to wishlist`
+        }
+        className={`absolute right-2.5 top-2.5 z-10 grid h-8 w-8 cursor-pointer place-items-center rounded-full transition-all ${
+          isWishlisted ? "hover:bg-white" : "text-accent hover:bg-white"
         }`}
       >
-        <HeartIcon />
         <HeartIcon filled={isWishlisted} />
       </button>
 
@@ -71,18 +84,20 @@ export function ProductCard({ id, name, price, originalPrice, image, discount }:
       </h3>
 
       <div className="flex flex-col items-start gap-1.5">
-        <div className="mt-2 flex items-baseline gap-1.5 sm:gap-2 flex-wrap">
-          <span className="text-xl sm:text-[22px] font-bold text-brand-strong leading-tight">
+        <div className="mt-2 flex flex-wrap items-baseline gap-1.5 sm:gap-2">
+          <span className="text-xl font-bold leading-tight text-brand-strong sm:text-[22px]">
             {formatPrice(price)}
           </span>
+
           {originalPrice ? (
-            <span className="text-xs sm:text-sm font-medium text-text-muted line-through">
+            <span className="text-xs font-medium text-text-muted line-through sm:text-sm">
               {formatPrice(originalPrice)}
             </span>
           ) : null}
         </div>
+
         {discount ? (
-          <span className="rounded-full mb-3 bg-accent px-1.5 py-0.5 text-[10px] font-semibold text-white shadow-sm">
+          <span className="mb-3 rounded-full bg-accent px-1.5 py-0.5 text-[10px] font-semibold text-white shadow-sm">
             {discount}% OFF
           </span>
         ) : null}
@@ -90,33 +105,34 @@ export function ProductCard({ id, name, price, originalPrice, image, discount }:
 
       <button
         type="button"
-        onClick={(e) => {
-          e.preventDefault();
-          e.stopPropagation();
-        }}
-        className="cursor-pointer mt-auto h-9 w-full rounded-md bg-brand text-sm font-semibold text-white transition-colors hover:bg-brand-strong"
         onClick={handleAddToCart}
-        className={`cursor-pointer mt-auto h-9 w-full rounded-md text-sm font-semibold text-white transition-all ${
-          justAdded
-            ? "bg-accent scale-[0.98]"
+        className={`mt-auto h-9 w-full cursor-pointer rounded-md text-xs sm:text-sm font-semibold text-white transition-all ${
+          feedback === "added"
+            ? "scale-[0.98] bg-accent"
+            : feedback === "already"
+            ? "scale-[0.98] bg-brand-strong text-amber-200"
+            : inCart
+            ? "bg-brand/90 hover:bg-brand-strong"
             : "bg-brand hover:bg-brand-strong"
         }`}
       >
-        Add to Cart
-        {justAdded ? "Added to Cart ✓" : "Add to Cart"}
+        {feedback === "added"
+          ? "Added to Cart ✓"
+          : feedback === "already"
+          ? "Already added to your cart"
+          : inCart
+          ? "Already in Cart"
+          : "Add to Cart"}
       </button>
     </Link>
   );
 }
 
-function HeartIcon() {
 function HeartIcon({ filled = false }: { filled?: boolean }) {
   return (
     <svg
       viewBox="0 0 24 24"
       aria-hidden="true"
-      className="h-5 w-5 shrink-0 text-accent"
-      fill="none"
       className="h-5 w-5 shrink-0 text-accent transition-transform"
       fill={filled ? "currentColor" : "none"}
       stroke="currentColor"
