@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import { Breadcrumb } from "./breadcrumb";
 import { ProductListing } from "./product-listing";
 import type { Product } from "../lib/products";
@@ -13,7 +14,9 @@ export function TrendingCoinsView({ products }: { products: Product[] }) {
           ]}
         />
       </div>
-      <ProductListing title="Trending Coins" products={products} />
+      <Suspense fallback={null}>
+        <ProductListing title="Trending Coins" products={products} />
+      </Suspense>
     </>
   );
 }
