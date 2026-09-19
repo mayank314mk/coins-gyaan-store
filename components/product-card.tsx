@@ -14,6 +14,7 @@ export function ProductCard({
   price,
   originalPrice,
   image,
+  stock,
   discount,
 }: Product) {
   const { addToCart, isInCart } = useCart();
@@ -35,11 +36,11 @@ export function ProductCard({
       return;
     }
 
-    addToCart(id);
-    setFeedback("added");
-    setTimeout(() => {
-      setFeedback(null);
-    }, 1500);
+    void addToCart(id).then((added) => {
+      if (!added) return;
+      setFeedback("added");
+      setTimeout(() => setFeedback(null), 1500);
+    });
   }
 
   function handleToggleWishlist(e: React.MouseEvent) {
@@ -100,30 +101,44 @@ export function ProductCard({
           <span className="mb-3 rounded-full bg-accent px-1.5 py-0.5 text-[10px] font-semibold text-white shadow-sm">
             {discount}% OFF
           </span>
-        ) : null}
+        ) : (
+          <span aria-hidden="true" className="mb-3 px-1.5 py-0.5 text-[10px]">
+            &nbsp;
+          </span>
+        )}
       </div>
 
-      <button
-        type="button"
-        onClick={handleAddToCart}
-        className={`mt-auto h-9 w-full cursor-pointer rounded-md text-xs sm:text-sm font-semibold text-white transition-all ${
-          feedback === "added"
-            ? "scale-[0.98] bg-accent"
+      {stock === 0 ? (
+        <button
+          type="button"
+          disabled
+          className="mt-auto h-9 w-full cursor-not-allowed rounded-md bg-gray-200 text-xs font-semibold text-gray-500 sm:text-sm"
+        >
+          Out of Stock
+        </button>
+      ) : (
+        <button
+          type="button"
+          onClick={handleAddToCart}
+          className={`mt-auto h-9 w-full cursor-pointer rounded-md text-xs sm:text-sm font-semibold text-white transition-all ${
+            feedback === "added"
+              ? "scale-[0.98] bg-accent"
+              : feedback === "already"
+              ? "scale-[0.98] bg-brand-strong text-amber-200"
+              : inCart
+              ? "bg-brand/90 hover:bg-brand-strong"
+              : "bg-brand hover:bg-brand-strong"
+          }`}
+        >
+          {feedback === "added"
+            ? "Added to Cart ✓"
             : feedback === "already"
-            ? "scale-[0.98] bg-brand-strong text-amber-200"
+            ? "Already added to your cart"
             : inCart
-            ? "bg-brand/90 hover:bg-brand-strong"
-            : "bg-brand hover:bg-brand-strong"
-        }`}
-      >
-        {feedback === "added"
-          ? "Added to Cart ✓"
-          : feedback === "already"
-          ? "Already added to your cart"
-          : inCart
-          ? "Already in Cart"
-          : "Add to Cart"}
-      </button>
+            ? "Already in Cart"
+            : "Add to Cart"}
+        </button>
+      )}
     </Link>
   );
 }

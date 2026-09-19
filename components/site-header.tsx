@@ -260,8 +260,8 @@ function ActionLinks({ className = "" }: { className?: string }) {
     { label: "Wishlist", href: "/wishlist", icon: HeartIcon, badge: wishlistBadge },
     { label: "Cart", href: "/cart", icon: CartIcon, badge: cartBadge },
     {
-      label: session?.user ? (session.user.name?.split(" ")[0] || "Account") : "Login / Signup",
-      href: "/auth",
+      label: session?.user ? (session.user.name?.split(" ")[0] || "Account") : "Sign In",
+      href: session?.user ? "/account" : "/login",
       icon: UserIcon,
       iconClassName: "h-5.5 w-5.5",
     },

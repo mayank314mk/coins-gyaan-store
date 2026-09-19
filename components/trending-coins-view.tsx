@@ -1,12 +1,8 @@
 import { Breadcrumb } from "./breadcrumb";
 import { ProductListing } from "./product-listing";
-import { allProducts } from "../lib/products";
+import type { Product } from "../lib/products";
 
-// For now, trending = the first 5 products (same slice as homepage)
-// This can later be driven by a `trending: true` flag or a dedicated API.
-const trendingProducts = allProducts.slice(0, 5);
-
-export function TrendingCoinsView() {
+export function TrendingCoinsView({ products }: { products: Product[] }) {
   return (
     <>
       <div className="mx-auto w-full max-w-[1440px] px-4 pt-4 sm:px-6 lg:px-8">
@@ -17,7 +13,7 @@ export function TrendingCoinsView() {
           ]}
         />
       </div>
-      <ProductListing title="Trending Coins" products={trendingProducts} />
+      <ProductListing title="Trending Coins" products={products} />
     </>
   );
 }

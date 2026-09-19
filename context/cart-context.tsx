@@ -1,200 +1,29 @@
 "use client";
 
-import React, {
-  createContext,
-  useContext,
-  useCallback,
-  useMemo,
-  useSyncExternalStore,
-} from "react";
+import React, { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
 import { getProductById, type Product } from "../lib/products";
+import { authClient } from "../lib/auth-client";
+import { addCartItem, clearCartItems, mergeGuestStore, removeCartItem } from "../app/actions/store";
+import { useToast } from "../components/toast";
 
-export interface CartItemWithProduct {
-  productId: string;
-  product: Product;
-}
-
-interface CartContextValue {
-  items: CartItemWithProduct[];
-  itemCount: number;
-  subtotal: number;
-  isHydrated: boolean;
-  isInCart: (productId: string) => boolean;
-  addToCart: (productId: string) => boolean;
-  removeFromCart: (productId: string) => void;
-  clearCart: () => void;
-}
-
-const STORAGE_KEY = "coins_gyaan_cart";
-const EMPTY_CART: string[] = [];
-
-let memoryCart: string[] = [];
-let isInitialized = false;
-const listeners = new Set<() => void>();
-
-function emitChange() {
-  for (const listener of listeners) {
-    listener();
-  }
-}
-
-function getStoredCart(): string[] {
-  if (typeof window === "undefined") return EMPTY_CART;
-  if (!isInitialized) {
-    isInitialized = true;
-    try {
-      const stored = localStorage.getItem(STORAGE_KEY);
-      if (stored) {
-        const parsed = JSON.parse(stored);
-        if (Array.isArray(parsed)) {
-          const validated: string[] = [];
-          for (const item of parsed) {
-            // Handle both legacy { productId: "..." } and string ID
-            const id = typeof item === "string" ? item : item?.productId;
-            if (typeof id === "string" && !validated.includes(id)) {
-              const product = getProductById(id);
-              if (product) {
-                validated.push(id);
-              }
-            }
-          }
-          memoryCart = validated;
-        }
-      }
-    } catch {
-      // Ignore parsing errors
-    }
-  }
-  return memoryCart;
-}
-
-function saveCart(newIds: string[]) {
-  memoryCart = newIds;
-  if (typeof window !== "undefined") {
-    try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(newIds));
-    } catch {
-      // Ignore storage errors
-    }
-  }
-  emitChange();
-}
-
-function cartSubscribe(onStoreChange: () => void) {
-  listeners.add(onStoreChange);
-  const onStorage = (e: StorageEvent) => {
-    if (e.key === STORAGE_KEY) {
-      isInitialized = false;
-      getStoredCart();
-      onStoreChange();
-    }
-  };
-  window.addEventListener("storage", onStorage);
-  return () => {
-    listeners.delete(onStoreChange);
-    window.removeEventListener("storage", onStorage);
-  };
-}
-
-const noopSubscribe = () => () => {};
-
+export interface CartItemWithProduct { productId: string; product: Product; quantity: number }
+interface CartContextValue { items: CartItemWithProduct[]; itemCount: number; subtotal: number; isHydrated: boolean; isInCart: (id: string) => boolean; addToCart: (id: string) => Promise<boolean>; removeFromCart: (id: string) => void; clearCart: () => void; }
+const KEY = "coins_gyaan_cart";
 const CartContext = createContext<CartContextValue | null>(null);
+function guestIds() { try { return JSON.parse(localStorage.getItem(KEY) || "[]").map((x: unknown) => typeof x === "string" ? x : (x as { productId?: string })?.productId).filter((x: unknown): x is string => typeof x === "string"); } catch { return []; } }
+function saveGuest(ids: string[]) { localStorage.setItem(KEY, JSON.stringify([...new Set(ids)])); }
 
 export function CartProvider({ children }: { children: React.ReactNode }) {
-  const productIds = useSyncExternalStore(
-    cartSubscribe,
-    getStoredCart,
-    () => EMPTY_CART
-  );
-
-  const isHydrated = useSyncExternalStore(
-    noopSubscribe,
-    () => true,
-    () => false
-  );
-
-  const isInCart = useCallback(
-    (productId: string) => {
-      return productIds.includes(productId);
-    },
-    [productIds]
-  );
-
-  const addToCart = useCallback((productId: string): boolean => {
-    const product = getProductById(productId);
-    if (!product) return false;
-
-    const current = getStoredCart();
-    if (current.includes(productId)) {
-      // Already in cart: do NOT duplicate
-      return false;
-    }
-
-    saveCart([...current, productId]);
-    return true;
-  }, []);
-
-  const removeFromCart = useCallback((productId: string) => {
-    const current = getStoredCart();
-    saveCart(current.filter((id) => id !== productId));
-  }, []);
-
-  const clearCart = useCallback(() => {
-    saveCart([]);
-  }, []);
-
-  const items = useMemo(() => {
-    return productIds
-      .map((id) => {
-        const product = getProductById(id);
-        if (!product) return null;
-        return {
-          productId: id,
-          product,
-        };
-      })
-      .filter((item): item is CartItemWithProduct => item !== null);
-  }, [productIds]);
-
-  const itemCount = items.length;
-
-  const subtotal = useMemo(() => {
-    return items.reduce(
-      (total, item) => total + item.product.price,
-      0
-    );
-  }, [items]);
-
-  const value = useMemo(
-    () => ({
-      items,
-      itemCount,
-      subtotal,
-      isHydrated,
-      isInCart,
-      addToCart,
-      removeFromCart,
-      clearCart,
-    }),
-    [
-      items,
-      itemCount,
-      subtotal,
-      isHydrated,
-      isInCart,
-      addToCart,
-      removeFromCart,
-      clearCart,
-    ]
-  );
-
+  const { data: session, isPending } = authClient.useSession();
+  const { showToast } = useToast();
+  const [items, setItems] = useState<CartItemWithProduct[]>([]); const [hydrated, setHydrated] = useState(false);
+  // This intentionally initializes browser storage after the auth client resolves.
+  // eslint-disable-next-line react-hooks/set-state-in-effect, react-hooks/exhaustive-deps
+  useEffect(() => { if (isPending) return; if (!session?.user) { setItems(guestIds().map((id: string) => { const product = getProductById(id); return product ? { productId: id, product, quantity: 1 } : null; }).filter((item: CartItemWithProduct | null): item is CartItemWithProduct => item !== null)); setHydrated(true); return; } (async () => { const state = await mergeGuestStore(guestIds(), []); if (!state.ok) showToast(state.error, "error"); else { saveGuest([]); setItems(state.data.cart); } setHydrated(true); })(); }, [session?.user?.id, isPending, showToast]);
+  const addToCart = useCallback(async (id: string) => { if (!getProductById(id)) return false; if (!session?.user) { showToast("Please sign in to add items to your cart.", "info"); window.location.href = `/login?redirect=${encodeURIComponent(window.location.pathname)}`; return false; } if (items.some((item) => item.productId === id)) return false; const result = await addCartItem(id); if (!result.ok) { showToast(result.error, "error"); return false; } setItems(result.data.cart); showToast("Added to cart!", "success"); return true; }, [session?.user, items, showToast]);
+  const removeFromCart = useCallback((id: string) => { if (!session?.user) { saveGuest(guestIds().filter((item: string) => item !== id)); setItems((items) => items.filter((item: CartItemWithProduct) => item.productId !== id)); return; } void removeCartItem(id).then((result) => { if (!result.ok) showToast(result.error, "error"); else setItems(result.data.cart); }); }, [session?.user, showToast]);
+  const clearCart = useCallback(() => { if (!session?.user) { saveGuest([]); setItems([]); return; } void clearCartItems().then((result) => { if (!result.ok) showToast(result.error, "error"); else setItems(result.data.cart); }); }, [session?.user, showToast]);
+  const value = useMemo(() => ({ items, itemCount: items.reduce((n, item) => n + item.quantity, 0), subtotal: items.reduce((n, item) => n + item.product.price * item.quantity, 0), isHydrated: hydrated, isInCart: (id: string) => items.some((item) => item.productId === id), addToCart, removeFromCart, clearCart }), [items, hydrated, addToCart, removeFromCart, clearCart]);
   return <CartContext.Provider value={value}>{children}</CartContext.Provider>;
 }
-
-export function useCart() {
-  const context = useContext(CartContext);
-  if (!context) {
-    throw new Error("useCart must be used within a CartProvider");
-  }
-  return context;
-}
+export function useCart() { const value = useContext(CartContext); if (!value) throw new Error("useCart must be used within a CartProvider"); return value; }

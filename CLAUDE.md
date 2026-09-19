@@ -2,7 +2,7 @@ Coins Gyaan Store — Context
 
 E-commerce site for historical/collectible Indian coins (numismatics), targeting collectors. NOT a generic marketplace — keep identity focused on heritage/authenticity.
 
-Stack: Next.js (App Router) + TypeScript + Tailwind. Backend: Next.js server components/actions. DB: PostgreSQL + Prisma (not yet connected). Auth: Auth.js (not yet implemented). Payments: Razorpay (not yet implemented).
+Stack: Next.js (App Router) + TypeScript + Tailwind. Backend: Next.js server components/actions. DB: PostgreSQL + Prisma (not yet connected). Auth: Auth.js (not yet implemented).
 
 Current phase: frontend-only, using mock data. No backend/auth/payments yet.
 

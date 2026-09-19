@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useWishlist } from "../context/wishlist-context";
 import { useCart } from "../context/cart-context";
 import { ProductCard } from "./product-card";
+import { Breadcrumb } from "./breadcrumb";
 
 export function WishlistView() {
   const {
@@ -19,9 +20,9 @@ export function WishlistView() {
   // Guard against hydration mismatches
   if (!isHydrated) {
     return (
-      <div className="mx-auto w-full max-w-[1440px] px-4 py-8 sm:px-6 lg:px-8">
-        <div className="h-8 w-48 animate-pulse rounded bg-gray-200 mb-8" />
-        <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
+      <div className="mx-auto w-full max-w-[1440px] px-4 py-4 sm:px-6 lg:px-8 lg:py-6">
+        <div className="h-8 w-48 animate-pulse rounded bg-gray-200 mb-4" />
+        <div className="grid grid-cols-2 gap-3 sm:gap-4 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
           {[1, 2, 3, 4, 5].map((n) => (
             <div
               key={n}
@@ -33,31 +34,25 @@ export function WishlistView() {
     );
   }
 
-  function handleMoveAllToCart() {
+  async function handleMoveAllToCart() {
     if (items.length === 0) return;
-    for (const item of items) {
-      addToCart(item.id);
-    }
+    const results = await Promise.all(items.map((item) => addToCart(item.id)));
+    if (!results.every(Boolean)) return;
     clearWishlist();
     setMovedAllNotification(true);
     setTimeout(() => setMovedAllNotification(false), 3000);
   }
 
   return (
-    <div className="mx-auto w-full max-w-[1440px] px-4 py-6 sm:px-6 lg:px-8 lg:py-10">
-      {/* Breadcrumb */}
-      <nav className="mb-6 flex items-center gap-2 text-xs text-text-muted">
-        <Link href="/" className="hover:text-accent transition-colors">
-          Home
-        </Link>
-        <span>/</span>
-        <span className="font-semibold text-brand-strong">My Wishlist</span>
-      </nav>
+    <div className="mx-auto w-full max-w-[1440px] px-4 py-4 sm:px-6 lg:px-8 lg:py-6">
+      <div className="mb-6">
+        <Breadcrumb items={[{ label: "Home", href: "/" }, { label: "My Wishlist" }]} />
+      </div>
 
       {/* Header Bar */}
-      <div className="mb-6 flex flex-wrap items-baseline justify-between gap-4 border-b border-gray-100 pb-4">
+      <div className="mb-4 flex flex-wrap items-baseline justify-between gap-3 border-gray-100 pb-4 sm:mb-6">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight text-brand-strong sm:text-3xl">
+          <h1 className="text-xl font-bold tracking-tight text-brand-strong sm:text-2xl">
             My Wishlist
           </h1>
           <p className="mt-1 text-sm text-text-muted">
@@ -158,4 +153,3 @@ function HeartEmptyIcon({ className = "h-6 w-6" }: { className?: string }) {
     </svg>
   );
 }
-

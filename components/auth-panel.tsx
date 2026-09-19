@@ -14,9 +14,11 @@ export function AuthPanel() {
     setErrorMessage(null);
     setIsSigningIn(true);
 
+    const redirect = new URLSearchParams(window.location.search).get("redirect");
+    const callbackURL = redirect?.startsWith("/") ? redirect : "/account";
     const { error } = await authClient.signIn.social({
       provider: "google",
-      callbackURL: "/",
+      callbackURL,
     });
 
     if (error) {
@@ -70,7 +72,7 @@ export function AuthPanel() {
     <section className="mx-auto w-full max-w-md rounded-3xl border border-border-subtle bg-white p-8 shadow-[0_18px_50px_rgba(20,57,47,0.08)] sm:p-10">
       <p className="mb-3 text-sm font-semibold uppercase tracking-[0.18em] text-accent">Coins Gyaan Store</p>
       <h1 className="text-3xl font-bold tracking-tight text-brand-strong">Sign in to your collection.</h1>
-      <p className="mt-3 text-sm leading-6 text-text-muted">Use your Google account to access your collector account. No password to remember.</p>
+      <p className="mt-3 text-sm leading-6 text-text-muted">Use your Google account to access your collector account.</p>
       {errorMessage ? <ErrorMessage message={errorMessage} /> : null}
       <button type="button" onClick={handleGoogleSignIn} disabled={isSigningIn} className="mt-8 inline-flex w-full items-center justify-center gap-3 rounded-full bg-brand px-5 py-3.5 text-sm font-semibold text-white transition-colors hover:bg-brand-strong disabled:cursor-not-allowed disabled:opacity-60">
         <GoogleIcon />

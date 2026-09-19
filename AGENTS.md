@@ -82,9 +82,6 @@ technical requirement.
 
 - Auth.js / NextAuth
 
-### Payments
-
-- Razorpay
 
 ### Deployment
 

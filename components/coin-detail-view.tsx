@@ -435,16 +435,22 @@ export function CoinDetailView({
               </div>
 
               {/* Main Actions */}
-              <div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2">
-                <button
+              {product.stock === 0 ? (
+                <p className="mt-4 rounded-xl bg-red-50 px-4 py-3 text-sm font-semibold text-red-700">
+                  This coin is no longer available.
+                </p>
+              ) : product.stock === 1 ? (
+                <div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2">
+                  <button
                   type="button"
-                  onClick={() => {
+                  onClick={async () => {
                     if (inCart) {
                       setCartFeedback("already");
                       setTimeout(() => setCartFeedback(null), 2000);
                       return;
                     }
-                    addToCart(product.id);
+                    const added = await addToCart(product.id);
+                    if (!added) return;
                     setCartFeedback("added");
                     setTimeout(() => setCartFeedback(null), 2000);
                   }}
@@ -465,21 +471,20 @@ export function CoinDetailView({
                     : inCart
                     ? "Already in Cart"
                     : "Add to Cart"}
-                </button>
+                  </button>
 
-                <button
+                  <button
                   type="button"
-                  onClick={() => {
-                    if (!inCart) {
-                      addToCart(product.id);
-                    }
+                  onClick={async () => {
+                    if (!inCart && !(await addToCart(product.id))) return;
                     router.push("/cart");
                   }}
                   className="flex h-12 w-full cursor-pointer items-center justify-center rounded-xl bg-accent text-base font-bold text-white shadow-sm transition-all hover:bg-accent/90 hover:shadow"
                 >
                   Buy Now
-                </button>
-              </div>
+                  </button>
+                </div>
+              ) : null}
             </div>
 
             {/* Collector Trust Features */}

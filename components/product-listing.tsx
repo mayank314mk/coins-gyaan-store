@@ -1,36 +1,40 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import { ProductCard } from "./product-card";
 import { SortDropdown } from "./sort-dropdown";
 import { Pagination } from "./pagination";
-import { sortProducts, type Product, type SortOption } from "../lib/products";
-
-const PAGE_SIZE = 20;
+import { type Product, type SortOption } from "../lib/products";
 
 export function ProductListing({
   title,
   products,
+  total = products.length,
+  page = 1,
+  totalPages = Math.max(1, Math.ceil(products.length / 20)),
   emptyMessage = "No coins found in this category yet.",
 }: {
   title: string;
   products: Product[];
+  total?: number;
+  page?: number;
+  totalPages?: number;
   emptyMessage?: string;
 }) {
-  const [sort, setSort] = useState<SortOption>("new-arrivals");
-  const [page, setPage] = useState(1);
-
-  const sorted = useMemo(() => sortProducts(products, sort), [products, sort]);
-  const totalPages = Math.max(1, Math.ceil(sorted.length / PAGE_SIZE));
-  const paged = sorted.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const sort = (searchParams.get("sort") as SortOption) || "new-arrivals";
 
   function handleSortChange(value: SortOption) {
-    setSort(value);
-    setPage(1);
+    const next = new URLSearchParams(searchParams.toString());
+    next.set("sort", value); next.delete("page");
+    router.push(`?${next.toString()}`);
   }
 
   function handlePageChange(next: number) {
-    setPage(next);
+    const params = new URLSearchParams(searchParams.toString());
+    if (next === 1) params.delete("page"); else params.set("page", String(next));
+    router.push(`?${params.toString()}`);
     if (typeof window !== "undefined") {
       window.scrollTo({ top: 0, behavior: "smooth" });
     }
@@ -44,15 +48,15 @@ export function ProductListing({
             {title}
           </h1>
           <p className="mt-0.5 text-xs font-medium text-text-muted sm:text-sm">
-            {products.length} {products.length === 1 ? "Coin" : "Coins"}
+            {total} {total === 1 ? "Coin" : "Coins"}
           </p>
         </div>
         <SortDropdown value={sort} onChange={handleSortChange} />
       </div>
 
-      {paged.length > 0 ? (
+      {products.length > 0 ? (
         <div className="grid grid-cols-2 gap-3 sm:gap-4 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
-          {paged.map((product) => (
+          {products.map((product) => (
             <ProductCard key={product.id} {...product} />
           ))}
         </div>

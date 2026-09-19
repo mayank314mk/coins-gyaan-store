@@ -4,9 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { ProductCard } from "./product-card";
 import { CATEGORIES } from "../lib/categories";
-import { allProducts } from "../lib/products";
-
-const trendingProducts = allProducts.slice(0, 5);
+import type { Product } from "../lib/products";
 
 export function CategorySection() {
   function openSidebar() {
@@ -51,7 +49,7 @@ export function CategorySection() {
   );
 }
 
-export function TrendingSection() {
+export function TrendingSection({ products }: { products: Product[] }) {
   return (
     <section
       id="trending"
@@ -62,7 +60,7 @@ export function TrendingSection() {
         {/* Mobile: one card fills ~85% of the screen width; the next peeks
             in to signal there is more to scroll. sm: fixed 190px. lg: 5-col grid. */}
         <div className="hide-scrollbar flex gap-3 overflow-x-auto pb-2 sm:gap-4 lg:grid lg:grid-cols-5 lg:overflow-visible">
-          {trendingProducts.map((product) => (
+          {products.map((product) => (
             <div
               key={product.id}
               className="w-[66vw] max-w-[300px] flex-none sm:w-[200px] lg:w-auto lg:flex-auto"
@@ -206,19 +204,13 @@ export function SiteFooter() {
   ];
 
   const serviceLinks = [
-    { label: "Track Order", href: "#track-order" },
-    { label: "Shipping & Delivery", href: "#shipping" },
-    { label: "Returns & Refunds", href: "#returns" },
-    { label: "FAQs", href: "#faqs" },
-    { label: "Contact Us", href: "#contact" },
+    { label: "Track Order", href: "/orders" },
+    { label: "View Cart", href: "/cart" },
+    { label: "Wishlist", href: "/wishlist" },
   ];
-
-  const companyLinks = [
-    { label: "About Us", href: "#about" },
-    { label: "YouTube Channel", href: "https://www.youtube.com/@COINNEWS-rn5br", isExternal: true },
-    { label: "Coin Guide", href: "#guide" },
-    { label: "Terms & Conditions", href: "#terms" },
-    { label: "Privacy Policy", href: "#privacy" },
+  const shopLinkColumns = [
+    shopLinks.slice(0, Math.ceil(shopLinks.length / 2)),
+    shopLinks.slice(Math.ceil(shopLinks.length / 2)),
   ];
 
   return (
@@ -244,22 +236,37 @@ export function SiteFooter() {
             A focused home for Indian numismatics, collectible coins and
             collecting knowledge.
           </p>
+          <div className="mt-5 max-w-[220px] border-t border-white/15 pt-3">
+            <p className="text-[10px] font-semibold uppercase tracking-wider text-white/55">
+              Email us
+            </p>
+            <a
+              href="mailto:mayank314mk@gmail.com"
+              className="mt-1 inline-block text-xs text-white/80 transition-colors hover:text-white"
+            >
+              mayank314mk@gmail.com
+            </a>
+          </div>
         </div>
 
         {/* Shop */}
-        <div>
+        <div className="lg:col-span-2">
           <h2 className="text-sm font-semibold uppercase tracking-wider text-white/90">
             Shop
           </h2>
-          <ul className="mt-3 space-y-2 text-xs text-white/70">
-            {shopLinks.map((link) => (
-              <li key={link.label}>
-                <Link href={link.href} className="transition-colors hover:text-white">
-                  {link.label}
-                </Link>
-              </li>
+          <div className="mt-3 grid grid-cols-2 gap-x-8">
+            {shopLinkColumns.map((links, columnIndex) => (
+              <ul key={columnIndex} className="space-y-2 text-xs text-white/70">
+                {links.map((link) => (
+                  <li key={link.label}>
+                    <Link href={link.href} className="transition-colors hover:text-white">
+                      {link.label}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
             ))}
-          </ul>
+          </div>
         </div>
 
         {/* Customer Service */}
@@ -278,32 +285,6 @@ export function SiteFooter() {
           </ul>
         </div>
 
-        {/* Company */}
-        <div>
-          <h2 className="text-sm font-semibold uppercase tracking-wider text-white/90">
-            Company
-          </h2>
-          <ul className="mt-3 space-y-2 text-xs text-white/70">
-            {companyLinks.map((link) => (
-              <li key={link.label}>
-                {link.isExternal ? (
-                  <a
-                    href={link.href}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="transition-colors hover:text-white"
-                  >
-                    {link.label}
-                  </a>
-                ) : (
-                  <Link href={link.href} className="transition-colors hover:text-white">
-                    {link.label}
-                  </Link>
-                )}
-              </li>
-            ))}
-          </ul>
-        </div>
       </div>
       <div className="mx-auto mt-8 flex max-w-[1440px] flex-col gap-2 border-t border-white/15 pt-4 text-xs text-white/60 sm:flex-row sm:items-center sm:justify-between">
         <span>Copyright 2026 Coins Gyaan Store. All rights reserved.</span>
@@ -332,11 +313,11 @@ export function MobileBottomNav() {
         <GridIcon />
         <span>Categories</span>
       </button>
-      <Link href="/all-coins" className="grid place-items-center gap-1 hover:text-accent transition-colors">
+      <Link href="/cart" className="grid place-items-center gap-1 hover:text-accent transition-colors">
         <CartIcon />
-        <span>Shop</span>
+        <span>Cart</span>
       </Link>
-      <Link href="#account" className="grid place-items-center gap-1 hover:text-accent transition-colors">
+      <Link href="/account" className="grid place-items-center gap-1 hover:text-accent transition-colors">
         <UserIcon />
         <span>Account</span>
       </Link>

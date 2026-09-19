@@ -18,12 +18,13 @@ export type Product = {
   image: string;
   backImage?: string;
   category: CoinCategory;
-  isNew?: boolean;
+  stock?: number;
+  isTrending?: boolean;
   discount?: number;
   description?: string;
 };
 
-const rawProducts: Omit<Product, "discount">[] = [
+export const seedProducts: Omit<Product, "discount">[] = [
   {
     id: "p-001",
     name: "Republic India 1970 1 Rupee Definitive Coin",
@@ -32,7 +33,7 @@ const rawProducts: Omit<Product, "discount">[] = [
     image: "/images/coins/1 Rs 1970 F.png",
     backImage: "/images/coins/1 Rs 1970 B.png",
     category: "Commemorative Coins",
-    isNew: true,
+    isTrending: true,
     description:
       "Authentic Republic India 1970 1 Rupee coin in collectible grade condition. Features the iconic Lion Capital of Ashoka on the obverse and value with ear of corn design on the reverse.",
   },
@@ -66,7 +67,7 @@ const rawProducts: Omit<Product, "discount">[] = [
     image: "/images/coins/1 Rs 1982 F.png",
     backImage: "/images/coins/1 Rs 1982 B.png",
     category: "Republic India",
-    isNew: true,
+    isTrending: true,
     description:
       "Issued in 1982 to promote national solidarity, depicting the outline map of India with national flag and integration motifs.",
   },
@@ -111,7 +112,7 @@ const rawProducts: Omit<Product, "discount">[] = [
     image: "/images/coins/5 Rs 1st WAR F.png",
     backImage: "/images/coins/5 Rs 1st WAR B.png",
     category: "Medieval India",
-    isNew: true,
+    isTrending: true,
     description:
       "Issued to commemorate 150 years of the historic 1857 First War of Indian Independence. Depicts freedom fighters with national insignia.",
   },
@@ -154,7 +155,7 @@ const rawProducts: Omit<Product, "discount">[] = [
     image: "/images/coins/1 Rs 1985 F.png",
     backImage: "/images/coins/1 Rs 1985 B.png",
     category: "Republic India",
-    isNew: true,
+    isTrending: true,
     description:
       "Cupro-nickel commemorative 1 Rupee coin marking the UN International Youth Year 1985, featuring profile motifs symbolizing youth advancement.",
   },
@@ -177,7 +178,7 @@ const rawProducts: Omit<Product, "discount">[] = [
     image: "/images/coins/50 Paise 1986 F.png",
     backImage: "/images/coins/50 Paise 1986 B.png",
     category: "Scare",
-    isNew: true,
+    isTrending: true,
     description:
       "Commemorative issue celebrating fisheries development in India with fisherman boat and ocean wave relief artwork.",
   },
@@ -255,7 +256,7 @@ const rawProducts: Omit<Product, "discount">[] = [
     image: "/images/coins/1 Pice 1953 F.png",
     backImage: "/images/coins/1 Pice 1953 B.png",
     category: "British India",
-    isNew: true,
+    isTrending: true,
     description:
       "Historic bronze One Pice coin showing the dynamic galloping horse motif, minted during the formative post-independence transition era.",
   },
@@ -267,7 +268,7 @@ const rawProducts: Omit<Product, "discount">[] = [
     image: "/images/coins/50 Paise 1957 B.png",
     backImage: "/images/coins/50 Paise 1957 F.png",
     category: "Ancient India",
-    isNew: true,
+    isTrending: true,
     description:
       "Choice specimen of the initial decimal 50 Naye Paise series with sharp strikes on the Ashoka Lion crest and denomination.",
   },
@@ -323,7 +324,7 @@ const rawProducts: Omit<Product, "discount">[] = [
     image: "/images/coins/1 Pice 1953 B.png",
     backImage: "/images/coins/1 Pice 1953 F.png",
     category: "Error Coin",
-    isNew: true,
+    isTrending: true,
     description:
       "Classic 1953 One Pice showing pristine galloping horse design, high rims, and clear lettering.",
   },
@@ -334,7 +335,7 @@ function calcDiscount(price: number, originalPrice?: number): number {
   return Math.round(((originalPrice - price) / originalPrice) * 100);
 }
 
-export const allProducts: Product[] = rawProducts.map((p) => ({
+export const allProducts: Product[] = seedProducts.map((p) => ({
   ...p,
   discount: calcDiscount(p.price, p.originalPrice),
 }));
@@ -396,7 +397,7 @@ export function sortProducts(products: Product[], sort: SortOption): Product[] {
       return list.sort((a, b) => (b.discount ?? 0) - (a.discount ?? 0));
     case "new-arrivals":
     default:
-      return list.sort((a, b) => Number(b.isNew) - Number(a.isNew));
+      return list.sort((a, b) => Number(b.isTrending) - Number(a.isTrending));
   }
 }
 

@@ -1,10 +1,11 @@
 "use client";
 
-import React, { useState } from "react";
+import React from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useCart } from "../context/cart-context";
 import { formatPrice } from "../lib/products";
+import { Breadcrumb } from "./breadcrumb";
 
 export function CartView() {
   const {
@@ -16,32 +17,25 @@ export function CartView() {
     isHydrated,
   } = useCart();
 
-  const [checkoutNotice, setCheckoutNotice] = useState(false);
-
   // During hydration, show skeleton or empty layout to prevent mismatch
   if (!isHydrated) {
     return (
-      <div className="mx-auto w-full max-w-[1440px] px-4 py-8 sm:px-6 lg:px-8">
-        <div className="h-8 w-48 animate-pulse rounded bg-gray-200 mb-8" />
+      <div className="mx-auto w-full max-w-[1440px] px-4 py-4 sm:px-6 lg:px-8 lg:py-6">
+        <div className="h-8 w-48 animate-pulse rounded bg-gray-200 mb-4" />
         <div className="h-64 w-full animate-pulse rounded-2xl bg-gray-100" />
       </div>
     );
   }
 
   return (
-    <div className="mx-auto w-full max-w-[1440px] px-4 py-6 sm:px-6 lg:px-8 lg:py-10">
-      {/* Breadcrumb / Top Bar */}
-      <nav className="mb-6 flex items-center gap-2 text-xs text-text-muted">
-        <Link href="/" className="hover:text-accent transition-colors">
-          Home
-        </Link>
-        <span>/</span>
-        <span className="font-semibold text-brand-strong">Shopping Cart</span>
-      </nav>
+    <div className="mx-auto w-full max-w-[1440px] px-4 py-4 sm:px-6 lg:px-8 lg:py-6">
+      <div className="mb-6">
+        <Breadcrumb items={[{ label: "Home", href: "/" }, { label: "Shopping Cart" }]} />
+      </div>
 
-      <div className="mb-8 flex flex-wrap items-baseline justify-between gap-4 border-b border-gray-100 pb-4">
+      <div className="mb-4 flex flex-wrap items-baseline justify-between gap-3 border-gray-100 pb-4 sm:mb-6">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight text-brand-strong sm:text-3xl">
+          <h1 className="text-xl font-bold tracking-tight text-brand-strong sm:text-2xl">
             Shopping Cart
           </h1>
           <p className="mt-1 text-sm text-text-muted">
@@ -155,12 +149,7 @@ export function CartView() {
 
                 <div className="flex justify-between text-text-muted">
                   <span>Shipping & Packaging</span>
-                  <span className="font-semibold text-emerald-700">Free</span>
-                </div>
-
-                <div className="flex justify-between text-text-muted">
-                  <span>Taxes</span>
-                  <span className="text-xs text-text-muted">Included</span>
+                  <span className="font-medium text-brand-strong">{formatPrice(80)}</span>
                 </div>
               </div>
 
@@ -169,30 +158,20 @@ export function CartView() {
                   Total Amount
                 </span>
                 <span className="text-2xl font-extrabold text-brand-strong">
-                  {formatPrice(subtotal)}
+                  {formatPrice(subtotal + 80)}
                 </span>
               </div>
 
               <p className="mt-1 text-[11px] text-text-muted">
-                Free insured packaging on all collector orders across India.
+                Shipping and packaging is charged at a flat ₹80.
               </p>
 
-              <button
-                type="button"
-                onClick={() => setCheckoutNotice(true)}
+              <Link
+                href="/checkout"
                 className="mt-6 flex h-12 w-full cursor-pointer items-center justify-center rounded-xl bg-brand text-base font-bold text-white shadow-sm transition-all hover:bg-brand-strong hover:shadow"
               >
-                Proceed to Checkout
-              </button>
-
-              {checkoutNotice && (
-                <div className="mt-3 rounded-xl border border-accent/30 bg-accent/10 p-3 text-xs text-brand-strong animate-in fade-in duration-200">
-                  <p className="font-semibold text-accent">Frontend Preview</p>
-                  <p className="mt-0.5 text-text-muted">
-                    Checkout and Razorpay payments will be connected in a future development phase. Your cart is preserved locally.
-                  </p>
-                </div>
-              )}
+                Add Delivery Info
+              </Link>
             </div>
           </div>
         </div>

@@ -1,194 +1,21 @@
 "use client";
-
-import React, {
-  createContext,
-  useContext,
-  useCallback,
-  useMemo,
-  useSyncExternalStore,
-} from "react";
+import React, { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
 import { getProductById, type Product } from "../lib/products";
+import { authClient } from "../lib/auth-client";
+import { clearWishlistItems, mergeGuestStore, toggleWishlistItem } from "../app/actions/store";
 import { useCart } from "./cart-context";
-
-interface WishlistContextValue {
-  items: Product[];
-  itemCount: number;
-  isHydrated: boolean;
-  isInWishlist: (productId: string) => boolean;
-  toggleWishlist: (productId: string) => void;
-  removeFromWishlist: (productId: string) => void;
-  clearWishlist: () => void;
-  moveToCart: (productId: string) => void;
-}
-
-const STORAGE_KEY = "coins_gyaan_wishlist";
-const EMPTY_WISHLIST: string[] = [];
-
-let memoryWishlist: string[] = [];
-let isWishlistInitialized = false;
-const listeners = new Set<() => void>();
-
-function emitChange() {
-  for (const listener of listeners) {
-    listener();
-  }
-}
-
-function getStoredWishlist(): string[] {
-  if (typeof window === "undefined") return EMPTY_WISHLIST;
-  if (!isWishlistInitialized) {
-    isWishlistInitialized = true;
-    try {
-      const stored = localStorage.getItem(STORAGE_KEY);
-      if (stored) {
-        const parsed = JSON.parse(stored);
-        if (Array.isArray(parsed)) {
-          const validated: string[] = [];
-          for (const id of parsed) {
-            if (typeof id === "string" && !validated.includes(id)) {
-              const product = getProductById(id);
-              if (product) {
-                validated.push(id);
-              }
-            }
-          }
-          memoryWishlist = validated;
-        }
-      }
-    } catch {
-      // Ignore parsing errors
-    }
-  }
-  return memoryWishlist;
-}
-
-function saveWishlist(newIds: string[]) {
-  memoryWishlist = newIds;
-  if (typeof window !== "undefined") {
-    try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(newIds));
-    } catch {
-      // Ignore storage errors
-    }
-  }
-  emitChange();
-}
-
-function wishlistSubscribe(onStoreChange: () => void) {
-  listeners.add(onStoreChange);
-  const onStorage = (e: StorageEvent) => {
-    if (e.key === STORAGE_KEY) {
-      isWishlistInitialized = false;
-      getStoredWishlist();
-      onStoreChange();
-    }
-  };
-  window.addEventListener("storage", onStorage);
-  return () => {
-    listeners.delete(onStoreChange);
-    window.removeEventListener("storage", onStorage);
-  };
-}
-
-const noopSubscribe = () => () => {};
-
-const WishlistContext = createContext<WishlistContextValue | null>(null);
-
+import { useToast } from "../components/toast";
+interface WishlistContextValue { items: Product[]; itemCount: number; isHydrated: boolean; isInWishlist: (id: string) => boolean; toggleWishlist: (id: string) => Promise<boolean>; removeFromWishlist: (id: string) => void; clearWishlist: () => void; moveToCart: (id: string) => void; }
+const KEY = "coins_gyaan_wishlist"; const WishlistContext = createContext<WishlistContextValue | null>(null);
+function guestIds() { try { return JSON.parse(localStorage.getItem(KEY) || "[]").filter((id: unknown): id is string => typeof id === "string"); } catch { return []; } } function saveGuest(ids: string[]) { localStorage.setItem(KEY, JSON.stringify([...new Set(ids)])); }
 export function WishlistProvider({ children }: { children: React.ReactNode }) {
-  const productIds = useSyncExternalStore(
-    wishlistSubscribe,
-    getStoredWishlist,
-    () => EMPTY_WISHLIST
-  );
-
-  const isHydrated = useSyncExternalStore(
-    noopSubscribe,
-    () => true,
-    () => false
-  );
-
-  const { addToCart } = useCart();
-
-  const isInWishlist = useCallback(
-    (productId: string) => {
-      return productIds.includes(productId);
-    },
-    [productIds]
-  );
-
-  const toggleWishlist = useCallback((productId: string) => {
-    const product = getProductById(productId);
-    if (!product) return;
-
-    const current = getStoredWishlist();
-    if (current.includes(productId)) {
-      saveWishlist(current.filter((id) => id !== productId));
-    } else {
-      saveWishlist([...current, productId]);
-    }
-  }, []);
-
-  const removeFromWishlist = useCallback((productId: string) => {
-    const current = getStoredWishlist();
-    saveWishlist(current.filter((id) => id !== productId));
-  }, []);
-
-  const clearWishlist = useCallback(() => {
-    saveWishlist([]);
-  }, []);
-
-  const moveToCart = useCallback(
-    (productId: string) => {
-      addToCart(productId);
-      const current = getStoredWishlist();
-      saveWishlist(current.filter((id) => id !== productId));
-    },
-    [addToCart]
-  );
-
-  const items = useMemo(() => {
-    return productIds
-      .map((id) => getProductById(id))
-      .filter((p): p is Product => p !== undefined);
-  }, [productIds]);
-
-  const itemCount = items.length;
-
-  const value = useMemo(
-    () => ({
-      items,
-      itemCount,
-      isHydrated,
-      isInWishlist,
-      toggleWishlist,
-      removeFromWishlist,
-      clearWishlist,
-      moveToCart,
-    }),
-    [
-      items,
-      itemCount,
-      isHydrated,
-      isInWishlist,
-      toggleWishlist,
-      removeFromWishlist,
-      clearWishlist,
-      moveToCart,
-    ]
-  );
-
-  return (
-    <WishlistContext.Provider value={value}>
-      {children}
-    </WishlistContext.Provider>
-  );
+  const { data: session, isPending } = authClient.useSession(); const { addToCart } = useCart(); const { showToast } = useToast(); const [items, setItems] = useState<Product[]>([]); const [hydrated, setHydrated] = useState(false);
+  // This intentionally initializes browser storage after the auth client resolves.
+  // eslint-disable-next-line react-hooks/set-state-in-effect, react-hooks/exhaustive-deps
+  useEffect(() => { if (isPending) return; if (!session?.user) { setItems(guestIds().map(getProductById).filter((p: Product | undefined): p is Product => !!p)); setHydrated(true); return; } (async () => { const state = await mergeGuestStore([], guestIds()); if (!state.ok) showToast(state.error, "error"); else { saveGuest([]); setItems(state.data.wishlist); } setHydrated(true); })(); }, [session?.user?.id, isPending, showToast]);
+  const toggleWishlist = useCallback(async (id: string) => { if (!getProductById(id)) return false; if (!session?.user) { showToast("Please sign in to use your wishlist.", "info"); window.location.href = `/login?redirect=${encodeURIComponent(window.location.pathname)}`; return false; } const result = await toggleWishlistItem(id); if (!result.ok) { showToast(result.error, "error"); return false; } setItems(result.data.wishlist); return true; }, [session?.user, showToast]);
+  const clearWishlist = useCallback(() => { if (!session?.user) { saveGuest([]); setItems([]); return; } void clearWishlistItems().then((result) => { if (!result.ok) showToast(result.error, "error"); else setItems(result.data.wishlist); }); }, [session?.user, showToast]);
+  const value = useMemo(() => ({ items, itemCount: items.length, isHydrated: hydrated, isInWishlist: (id: string) => items.some((item) => item.id === id), toggleWishlist, removeFromWishlist: toggleWishlist, clearWishlist, moveToCart: (id: string) => { void addToCart(id).then((added) => { if (added) void toggleWishlist(id); }); } }), [items, hydrated, toggleWishlist, clearWishlist, addToCart]);
+  return <WishlistContext.Provider value={value}>{children}</WishlistContext.Provider>;
 }
-
-export function useWishlist() {
-  const context = useContext(WishlistContext);
-  if (!context) {
-    throw new Error("useWishlist must be used within a WishlistProvider");
-  }
-  return context;
-}
-
+export function useWishlist() { const value = useContext(WishlistContext); if (!value) throw new Error("useWishlist must be used within a WishlistProvider"); return value; }
