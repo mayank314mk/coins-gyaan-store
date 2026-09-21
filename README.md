@@ -24,46 +24,46 @@ A full-stack e-commerce platform for exploring and purchasing Indian collectible
 
 #### Product Details
 
-![Product Details](screenshots/productdetails.png)
+![Product Details](screenshots/ProductDetails.png)
 
 #### Shopping Cart
 
-![Shopping Cart](screenshots/shoppingcart.png)
+![Shopping Cart](screenshots/ShoppingCart.png)
 
 #### Wishlist
 
-![Wishlist](screenshots/wishlist.png)
+![Wishlist](screenshots/Wishlist.png)
 
 #### Google Authentication
 
-![Google Authentication](screenshots/googleauthentication.png)
+![Google Authentication](screenshots/GoogleAuthentication.png)
 
 #### My Account
 
-![My Account](screenshots/myaccount.png)
+![My Account](screenshots/MyAccount.png)
 
 #### Orders
 
-![Orders](screenshots/orders.png)
+![Orders](screenshots/Orders.png)
 
 #### Checkout
 
-![Checkout](screenshots/checkout.png)
+![Checkout](screenshots/Checkout.png)
 
 ### Admin Dashboard
 
 #### Admin Account
 
-![Admin Account](screenshots/adminaccount.png)
+![Admin Account](screenshots/AdminAccount.png)
 
 
 #### Product Management
 
-![Admin Product Management](screenshots/productmanagement.png)
+![Admin Product Management](screenshots/ProductManagement.png)
 
 #### Order Management
 
-![Admin Order Management](screenshots/ordermanagement.png)
+![Admin Order Management](screenshots/OrderManagement.png)
 
 ## Features
 
